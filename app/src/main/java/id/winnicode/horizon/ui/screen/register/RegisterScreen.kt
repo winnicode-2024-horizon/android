@@ -1,4 +1,4 @@
-package id.winnicode.horizon.ui.screen.login
+package id.winnicode.horizon.ui.screen.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,10 +26,7 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +52,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,7 +59,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.winnicode.horizon.MainApplication
 import id.winnicode.horizon.R
 import id.winnicode.horizon.factory.ViewModelFactory
-import id.winnicode.horizon.model.LoginRequest
+import id.winnicode.horizon.model.RegisterRequest
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.pattern.Pattern
 import id.winnicode.horizon.ui.theme.Black
@@ -72,44 +67,48 @@ import id.winnicode.horizon.ui.theme.GreyDark
 import id.winnicode.horizon.ui.theme.HorizonTheme
 import id.winnicode.horizon.ui.theme.outlinedTextFieldColors
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen (
+fun RegisterScreen (
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = viewModel(
+    viewModel: RegisterViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
     )
 ){
+    val username = rememberSaveable { mutableStateOf("") }
+    val firstname = rememberSaveable { mutableStateOf("") }
+    val lastname = rememberSaveable { mutableStateOf("") }
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
+    val usernameIsError = rememberSaveable{ mutableStateOf(true) }
+    val firstnameIsError = rememberSaveable{ mutableStateOf(true) }
+    val lastnameIsError = rememberSaveable{ mutableStateOf(true) }
     val emailIsError = rememberSaveable{ mutableStateOf(true) }
     val passwordIsError = rememberSaveable { mutableStateOf(true) }
     val loginDialog = remember { mutableStateOf(false) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
 
     val uiState = viewModel.uiState.collectAsState(initial = UiState.Loading)
-    val userSession = viewModel.userSession.collectAsState()
 
-    val onLoginClick = {
+    val onRegisterClick = {
         loginDialog.value = true
-        viewModel.loginUser(
-            LoginRequest(
+        viewModel.registerUser(
+            RegisterRequest(
+                username = username.value,
+                first_name = firstname.value,
+                last_name = lastname.value,
                 email = email.value,
-                password =password.value
+                password = password.value
             )
         )
     }
-
     uiState.value.let { uiStateValue ->
         when (uiStateValue) {
-
             is UiState.Success -> {
-                viewModel.saveUserSession(
-                    uiStateValue.data
-                )
                 if (loginDialog.value) {
-                    BasicAlertDialog(onDismissRequest = { }
+                    val response = uiStateValue.data.data
+                    BasicAlertDialog(
+                        onDismissRequest = { }
                     ) {
                         Surface(
                             modifier = modifier
@@ -120,18 +119,22 @@ fun LoginScreen (
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(imageVector =  Icons.Filled.CheckCircle, contentDescription = null )
+                                    Icon(
+                                        imageVector =  Icons.Filled.CheckCircle,
+                                        contentDescription = null)
+
                                     Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan judul
-                                    Text(text = stringResource(R.string.login_success_title), style = MaterialTheme.typography.headlineSmall)
+                                    Text(
+                                        text = stringResource(R.string.register_success_title),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
                                 }
-
                                 Spacer(modifier = Modifier.height(16.dp))
-
                                 Text(
                                     text = stringResource(
                                         id = R.string.registration_success,
-                                        email.value),
-//                                    userSession.value.token,
+                                        email.value
+                                    ),
                                 )
                                 Spacer(modifier = modifier.height(24.dp))
                                 TextButton(
@@ -159,6 +162,7 @@ fun LoginScreen (
                             tonalElevation = AlertDialogDefaults.TonalElevation
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
+
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
                                         imageVector =  Icons.Filled.Dangerous,
@@ -167,7 +171,7 @@ fun LoginScreen (
 
                                     Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan judul
                                     Text(
-                                        text = stringResource(R.string.login_fail_title),
+                                        text = stringResource(R.string.register_fail_title),
                                         style = MaterialTheme.typography.headlineSmall,
                                         color = MaterialTheme.colorScheme.error
                                     )
@@ -195,29 +199,40 @@ fun LoginScreen (
         }
     }
 
-    LoginContent(
+
+    RegisterContent(
+        username = username,
+        firstname = firstname,
+        lastname = lastname,
         email = email,
         password = password,
+        usernameIsError = usernameIsError,
+        firstnameIsError = firstnameIsError,
+        lastnameIsError = lastnameIsError,
         passwordIsError = passwordIsError,
         emailIsError = emailIsError,
         passwordVisible = passwordVisible,
-        loginDialog = loginDialog,
-        onLoginClick = onLoginClick
+        onRegisterClick = onRegisterClick
     )
 }
 
 @Composable
-fun LoginContent(
+fun RegisterContent(
     modifier: Modifier = Modifier,
+    username: MutableState<String>,
+    firstname: MutableState<String>,
+    lastname: MutableState<String>,
     email: MutableState<String>,
     password : MutableState<String>,
+    usernameIsError: MutableState<Boolean>,
+    firstnameIsError: MutableState<Boolean>,
+    lastnameIsError: MutableState<Boolean>,
     emailIsError: MutableState<Boolean>,
     passwordIsError: MutableState<Boolean>,
     passwordVisible: MutableState<Boolean>,
-    loginDialog: MutableState<Boolean>,
-    onLoginClick: () -> Unit
-){
+    onRegisterClick: () -> Unit
 
+){
     val scrollState = rememberScrollState()
 
     Column(
@@ -229,21 +244,86 @@ fun LoginContent(
 
         Spacer(modifier = modifier.height(30.dp))
         Image(
-            painter = painterResource(id = R.drawable.login),
+            painter = painterResource(id = R.drawable.register),
             contentDescription = "Login",
             contentScale = ContentScale.Fit,
             modifier = modifier
                 .fillMaxWidth()
                 .height(200.dp)
         )
+
         Spacer(modifier = modifier.height(20.dp))
+        OutlinedTextField(
+            label = { Text(text = stringResource(R.string.username)) },
+            value = username.value,
+            colors = outlinedTextFieldColors(),
+            onValueChange = {
+                username.value = it
+                usernameIsError.value = Pattern.usernamePattern(it)},
+            isError = !usernameIsError.value,
+            supportingText = {
+                if (!usernameIsError.value){
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.username_error_massage),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            maxLines = 1,
+            modifier = modifier
+                .width(377.dp)
+        )
+        OutlinedTextField(
+            label = { Text(text = stringResource(R.string.firstname)) },
+            value = firstname.value,
+            colors = outlinedTextFieldColors(),
+            onValueChange = {
+                firstname.value = it
+                firstnameIsError.value = Pattern.usernamePattern(it)},
+            isError = !firstnameIsError.value,
+            supportingText = {
+                if (!firstnameIsError.value){
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.username_error_massage),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            maxLines = 1,
+            modifier = modifier
+                .width(377.dp)
+        )
+        OutlinedTextField(
+            label = { Text(text = stringResource(R.string.lastname)) },
+            value = lastname.value,
+            colors = outlinedTextFieldColors(),
+            onValueChange = {
+                lastname.value = it
+                lastnameIsError.value = Pattern.usernamePattern(it)},
+            isError = !lastnameIsError.value,
+            supportingText = {
+                if (!lastnameIsError.value){
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.username_error_massage),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            maxLines = 1,
+            modifier = modifier
+                .width(377.dp)
+        )
+        Spacer(modifier = modifier.height(4.dp))
         OutlinedTextField(
             label = { Text(text = stringResource(R.string.email)) },
             value = email.value,
             colors = outlinedTextFieldColors(),
             onValueChange = {
                 email.value = it
-                emailIsError.value = Pattern.emailPattern(it) },
+                emailIsError.value = Pattern.emailPattern(it)},
             isError = !emailIsError.value,
             supportingText = {
                 if (!emailIsError.value){
@@ -259,7 +339,8 @@ fun LoginContent(
             modifier = modifier
                 .width(377.dp)
         )
-        Spacer(modifier = modifier.height(16.dp))
+
+        Spacer(modifier = modifier.height(4.dp))
         OutlinedTextField(
             label = { Text(text = stringResource(R.string.password)) },
             value = password.value,
@@ -271,7 +352,7 @@ fun LoginContent(
                 keyboardType = KeyboardType.Password
             ),
             onValueChange = { password.value = it
-                            passwordIsError.value = Pattern.passwordPattern(it)},
+                passwordIsError.value = Pattern.passwordPattern(it)},
             isError = !passwordIsError.value,
             supportingText = {
                 if (!emailIsError.value){
@@ -288,7 +369,9 @@ fun LoginContent(
                 val image = if (passwordVisible.value)
                     Icons.Filled.Visibility
                 else Icons.Filled.VisibilityOff
+
                 val description = if (passwordVisible.value) "Hide password" else "Show password"
+
                 IconButton(onClick = {passwordVisible.value = !passwordVisible.value}){
                     Icon(imageVector  = image, description)
                 }
@@ -296,6 +379,7 @@ fun LoginContent(
             modifier = modifier
                 .width(377.dp)
         )
+
         ClickableText(
             text = AnnotatedString("Forgot password?"),
             onClick = { },
@@ -307,10 +391,12 @@ fun LoginContent(
                 .align(Alignment.End)
                 .padding(top = 8.dp, end = 24.dp)
         )
+
+
         Spacer(modifier = modifier.height(20.dp))
         Box(modifier = modifier.padding(20.dp)) {
             Button(
-                onClick = { onLoginClick() },
+                onClick = { onRegisterClick() },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonColors(
                     containerColor = Black,
@@ -319,73 +405,26 @@ fun LoginContent(
                     disabledContentColor = Color.White
                 ),
                 enabled = emailIsError.value && email.value.isNotEmpty()
-                        && passwordIsError.value && password.value.isNotEmpty(),
+                        && passwordIsError.value && password.value.isNotEmpty()
+                        && usernameIsError.value && username.value.isNotEmpty()
+                        && firstnameIsError.value && firstname.value.isNotEmpty()
+                        && lastnameIsError.value && lastname.value.isNotEmpty(),
                 modifier = modifier
                     .height(50.dp)
                     .width(377.dp)
             ) {
-                Text(text = stringResource(R.string.login))
+                Text(text = stringResource(R.string.register))
             }
-        }
-        Spacer(modifier = modifier.height(6.dp))
-        Row (modifier = modifier.padding(24.dp, 0.dp, 24.dp, 0.dp)){
-
-            HorizontalDivider(
-                color = Black,
-                modifier = modifier
-                    .weight(2f)
-                    .height(1.dp)
-                    .align(Alignment.CenterVertically)
-
-            )
-            Text(text = "OR", modifier
-                .weight(1f),
-                textAlign = TextAlign.Center)
-            HorizontalDivider(
-                color = Black,
-                modifier = modifier
-                    .weight(2f)
-                    .height(1.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
-        Spacer(modifier = modifier.height(16.dp))
-            ElevatedButton(
-                onClick = { },
-                shape = RoundedCornerShape(10.dp),
-                modifier = modifier
-                    .height(50.dp)
-                    .width(377.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Black
-                )
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.google),
-                    contentDescription = "google",
-                    modifier.size(ButtonDefaults.IconSize),
-                    tint = Color.Black
-                )
-                Spacer(modifier = modifier.size(ButtonDefaults.IconSpacing))
-                Text(
-                    text = "Log Out"
-//                    stringResource(R.string.login_with_google)
-                    ,
-                    color = Color.Gray
-                )
         }
 
         Spacer(modifier = modifier.height(20.dp))
     }
-
-
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPreview() {
+fun RegisterPreview() {
     HorizonTheme {
-        LoginScreen()
+        RegisterScreen()
     }
 }

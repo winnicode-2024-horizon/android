@@ -4,6 +4,8 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -67,5 +69,20 @@ fun HorizonTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
+    )
+}
+
+@Composable
+fun outlinedTextFieldColors(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = GreyLight,
+        unfocusedContainerColor = GreyLight,
+        cursorColor = GreyDark,
+        focusedLabelColor = GreyDark,
+        unfocusedLabelColor = GreyDark,
+        focusedTrailingIconColor = GreyDark,
+        unfocusedTrailingIconColor = GreyDark,
+        focusedBorderColor = GreyLowDark,
+        unfocusedBorderColor = GreyLowDark,
     )
 }
