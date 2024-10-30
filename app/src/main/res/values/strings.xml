@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Horizon</string>
+    <string name="lastname">Lastname</string>
+    <string name="username_error_massage">Username harus 4–12 karakter, hanya huruf kecil dan angka.</string>
+    <string name="firstname_error_massage">Firstname harus 4–12 karakter, hanya huruf kecil dan angka.</string>
+    <string name="lastname_error_massage">Lastname harus 4–12 karakter, hanya huruf kecil dan angka.</string>
+    <string name="email">Email</string>
+    <string name="email_error_massage">Email tidak valid.</string>
+    <string name="password_error_message">Password harus berisi minimal 8 karakter tanpa simbol.</string>
+    <string name="login_with_google">Login With Google</string>
+    <string name="login">Login</string>
+    <string name="register">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="firstname">Firstname</string>
+    <string name="username">Username</string>
+    <string name="sign_up_with_google">Sign Up With Google</string>
+    <string name="next">Lanjut</string>
+    <string name="registration_success">Anda berhasil membuat akun dengan email %1$s. Meyiapkan berita untuk Anda....</string>
+    <string name="login_success">Anda berhasil login dengan email %1$s. Meyiapkan berita untuk Anda....</string>
+    <string name="login_success_title">Login Berhasil</string>
+    <string name="login_fail_title">Login Gagal</string>
+    <string name="register_fail_title">Register Gagal</string>
+    <string name="register_success_title">Register Berhasil</string>
 </resources>

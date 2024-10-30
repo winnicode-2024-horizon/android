@@ -69,4 +69,21 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:1.7.4")
 
+    //DB
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+
+    //Api caller
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+
+    //image
+    implementation ("io.coil-kt:coil-compose:2.2.0")
+
+    //viewmodel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+
+    implementation ("androidx.navigation:navigation-compose:2.8.2")
+
 }
