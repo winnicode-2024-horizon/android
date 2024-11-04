@@ -21,4 +21,7 @@
     <string name="login_fail_title">Login Gagal</string>
     <string name="register_fail_title">Register Gagal</string>
     <string name="register_success_title">Register Berhasil</string>
+    <string name="menu_home">Home</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="menu_profile">Profile</string>
 </resources>

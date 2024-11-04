@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,10 +26,7 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +52,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -251,7 +246,6 @@ fun LoginContent(
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(R.string.email_error_massage),
                         color = MaterialTheme.colorScheme.error
-
                     )
                 }
             },
@@ -327,55 +321,6 @@ fun LoginContent(
                 Text(text = stringResource(R.string.login))
             }
         }
-        Spacer(modifier = modifier.height(6.dp))
-        Row (modifier = modifier.padding(24.dp, 0.dp, 24.dp, 0.dp)){
-
-            HorizontalDivider(
-                color = Black,
-                modifier = modifier
-                    .weight(2f)
-                    .height(1.dp)
-                    .align(Alignment.CenterVertically)
-
-            )
-            Text(text = "OR", modifier
-                .weight(1f),
-                textAlign = TextAlign.Center)
-            HorizontalDivider(
-                color = Black,
-                modifier = modifier
-                    .weight(2f)
-                    .height(1.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
-        Spacer(modifier = modifier.height(16.dp))
-            ElevatedButton(
-                onClick = { },
-                shape = RoundedCornerShape(10.dp),
-                modifier = modifier
-                    .height(50.dp)
-                    .width(377.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Black
-                )
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.google),
-                    contentDescription = "google",
-                    modifier.size(ButtonDefaults.IconSize),
-                    tint = Color.Black
-                )
-                Spacer(modifier = modifier.size(ButtonDefaults.IconSpacing))
-                Text(
-                    text = "Log Out"
-//                    stringResource(R.string.login_with_google)
-                    ,
-                    color = Color.Gray
-                )
-        }
-
         Spacer(modifier = modifier.height(20.dp))
     }
 

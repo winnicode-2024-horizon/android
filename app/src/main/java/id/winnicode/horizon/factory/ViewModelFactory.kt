@@ -3,6 +3,7 @@ package id.winnicode.horizon.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import id.winnicode.horizon.di.Injection
+import id.winnicode.horizon.ui.common.SharedViewModel
 import id.winnicode.horizon.ui.screen.login.LoginViewModel
 import id.winnicode.horizon.ui.screen.register.RegisterViewModel
 
@@ -13,6 +14,11 @@ class ViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
+
+            modelClass.isAssignableFrom(SharedViewModel::class.java) -> SharedViewModel(
+                injection.userPreferences
+            )
+
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(
                 injection.userRepository,
                 injection.userPreferences
