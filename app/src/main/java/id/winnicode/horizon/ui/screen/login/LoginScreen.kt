@@ -74,7 +74,8 @@ fun LoginScreen (
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
-    )
+    ),
+    navigateToHome: () -> Unit
 ){
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
@@ -91,7 +92,7 @@ fun LoginScreen (
         viewModel.loginUser(
             LoginRequest(
                 email = email.value,
-                password =password.value
+                password = password.value
             )
         )
     }
@@ -123,14 +124,16 @@ fun LoginScreen (
                                 Spacer(modifier = Modifier.height(16.dp))
 
                                 Text(
-                                    text = stringResource(
-                                        id = R.string.registration_success,
-                                        email.value),
-//                                    userSession.value.token,
+                                    text =
+//                                    stringResource(
+//                                        id = R.string.registration_success,
+//                                        email.value),
+                                    userSession.value.token,
                                 )
                                 Spacer(modifier = modifier.height(24.dp))
                                 TextButton(
-                                    onClick = { loginDialog.value = false },
+                                    onClick = { loginDialog.value = false
+                                              navigateToHome()},
                                     modifier = modifier.align(Alignment.End)
                                 ) {
                                     Text(stringResource(R.string.next), color = Black)
@@ -331,6 +334,6 @@ fun LoginContent(
 @Composable
 fun LoginPreview() {
     HorizonTheme {
-        LoginScreen()
+        LoginScreen(navigateToHome = {})
     }
 }
