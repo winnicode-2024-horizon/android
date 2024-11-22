@@ -73,7 +73,9 @@ fun RegisterScreen (
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
-    )
+    ),
+    navigateToLogin: ()-> Unit
+
 ){
     val username = rememberSaveable { mutableStateOf("") }
     val firstname = rememberSaveable { mutableStateOf("") }
@@ -138,7 +140,8 @@ fun RegisterScreen (
                                 )
                                 Spacer(modifier = modifier.height(24.dp))
                                 TextButton(
-                                    onClick = { loginDialog.value = false },
+                                    onClick = { loginDialog.value = false
+                                              navigateToLogin()},
                                     modifier = modifier.align(Alignment.End)
                                 ) {
                                     Text(stringResource(R.string.next), color = Black)
@@ -425,6 +428,6 @@ fun RegisterContent(
 @Composable
 fun RegisterPreview() {
     HorizonTheme {
-        RegisterScreen()
+        RegisterScreen(navigateToLogin = {})
     }
 }

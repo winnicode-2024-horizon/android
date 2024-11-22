@@ -1,20 +1,45 @@
 package id.winnicode.horizon.data.repository
 
-import id.winnicode.horizon.model.AuthN
-import id.winnicode.horizon.model.LoginRequest
-import id.winnicode.horizon.model.RegisterRequest
 import id.winnicode.horizon.data.remote.mapper.asLogin
-import id.winnicode.horizon.data.remote.response.NewsItem
+import id.winnicode.horizon.data.remote.mapper.asNews
 import id.winnicode.horizon.data.remote.response.RegisterResponse
 import id.winnicode.horizon.data.remote.retrofit.ApiService
+import id.winnicode.horizon.model.AuthN
+import id.winnicode.horizon.model.LoginRequest
+import id.winnicode.horizon.model.News
+import id.winnicode.horizon.model.NewsDummyData
+import id.winnicode.horizon.model.RegisterRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class DefaultUserRepository(
     private val api: ApiService,
 ): UserRepository {
-    override suspend fun fetchNews(token: String): Flow<NewsItem> {
-        TODO("Not yet implemented")
+    private val News = mutableListOf<News>()
+
+    init {
+        if (News.isEmpty()){
+            NewsDummyData.newsList.forEach{
+                News.add(it)
+            }
+        }
+    }
+    override suspend fun fetchNews(token: String): Flow<List<News>> {
+        return flow {
+            val news = api.getNews("Bearer $token").data.news.map {newsItem ->
+                newsItem.asNews()
+            }
+            emit(news)
+        }
+    }
+
+    override suspend fun searchNews(query: String, token: String): Flow<List<News>> {
+        return flow {
+            val news = api.searchNews("Bearer $token", query).data.news.map {newsItem ->
+                newsItem.asNews()
+            }
+            emit(news)
+        }
     }
 
     override suspend fun register(

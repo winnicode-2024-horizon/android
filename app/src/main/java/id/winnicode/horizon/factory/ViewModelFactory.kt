@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import id.winnicode.horizon.di.Injection
 import id.winnicode.horizon.ui.common.SharedViewModel
+import id.winnicode.horizon.ui.screen.home.HomeViewModel
 import id.winnicode.horizon.ui.screen.login.LoginViewModel
 import id.winnicode.horizon.ui.screen.register.RegisterViewModel
 
@@ -24,6 +25,10 @@ class ViewModelFactory(
                 injection.userPreferences
             )
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> RegisterViewModel(
+                injection.userRepository
+            )
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> HomeViewModel(
+                injection.userPreferences,
                 injection.userRepository
             )
 

@@ -2,14 +2,16 @@ package id.winnicode.horizon.ui.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.winnicode.horizon.model.AuthN
-import id.winnicode.horizon.model.LoginRequest
 import id.winnicode.horizon.data.prefrences.UserPreferences
 import id.winnicode.horizon.data.repository.UserRepository
+import id.winnicode.horizon.model.AuthN
+import id.winnicode.horizon.model.LoginRequest
 import id.winnicode.horizon.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -21,23 +23,21 @@ class LoginViewModel(
 
 ): ViewModel() {
 
-    init {
-        viewModelScope.launch {
-            userPreferences.getUserSession()
-                .collect { authN ->
-                    _userSession.value = authN
-                }
-        }
-    }
-
     private val _uiState: MutableStateFlow<UiState<AuthN>> =
         MutableStateFlow(UiState.Loading)
     val uiState: StateFlow<UiState<AuthN>>
         get() = _uiState
 
-    private val _userSession: MutableStateFlow<AuthN> = MutableStateFlow(AuthN("","", false))
+    private val _userSession: StateFlow<AuthN> = userPreferences.getUserSession()
+        .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = AuthN("","", false)
+    )
     val userSession: StateFlow<AuthN>
-    get() = _userSession
+        get() = _userSession
+
+
 
     fun saveUserSession(user: AuthN) {
         viewModelScope.launch {

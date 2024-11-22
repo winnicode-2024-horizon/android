@@ -2,4 +2,14 @@
 <resources>
 
     <style name="Theme.Horizon" parent="android:Theme.Material.Light.NoActionBar" />
+
+
+    <style name="Theme.Horizon.Starting" parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_horizon_black</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Horizon</item>
+    </style>
+
 </resources>
