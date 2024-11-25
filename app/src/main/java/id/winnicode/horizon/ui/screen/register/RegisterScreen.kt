@@ -1,6 +1,7 @@
 package id.winnicode.horizon.ui.screen.register
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -215,7 +217,8 @@ fun RegisterScreen (
         passwordIsError = passwordIsError,
         emailIsError = emailIsError,
         passwordVisible = passwordVisible,
-        onRegisterClick = onRegisterClick
+        onRegisterClick = onRegisterClick,
+        onRegisteredClick = navigateToLogin
     )
 }
 
@@ -233,7 +236,8 @@ fun RegisterContent(
     emailIsError: MutableState<Boolean>,
     passwordIsError: MutableState<Boolean>,
     passwordVisible: MutableState<Boolean>,
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    onRegisteredClick: () -> Unit
 
 ){
     val scrollState = rememberScrollState()
@@ -421,6 +425,24 @@ fun RegisterContent(
         }
 
         Spacer(modifier = modifier.height(20.dp))
+        Box (contentAlignment = Alignment.BottomCenter){
+            Row(
+                modifier
+                    .padding(8.dp)
+                    .clickable { onRegisteredClick() }
+            ) {
+                Text(
+                    text = stringResource(R.string.registered_message),
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+                Text(
+                    text = stringResource(R.string.login),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     }
 }
 

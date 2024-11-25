@@ -25,4 +25,9 @@
     <string name="bookmark">Bookmark</string>
     <string name="menu_profile">Profile</string>
     <string name="search_new">Telusuri berita</string>
+    <string name="not_registered_message">"Don't have account? "</string>
+    <string name="registered_message">Have an account already? </string>
+    <string name="log_out">Log Out</string>
+    <string name="cancel">Batal</string>
+    <string name="log_out_message">Apakah Anda ingin Log Out?</string>
 </resources>

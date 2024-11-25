@@ -1,6 +1,8 @@
 package id.winnicode.horizon.ui.screen.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Dangerous
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -44,11 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -75,7 +78,8 @@ fun LoginScreen (
     viewModel: LoginViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
     ),
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    navigateToRegister: () -> Unit
 ){
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
@@ -83,6 +87,7 @@ fun LoginScreen (
     val passwordIsError = rememberSaveable { mutableStateOf(true) }
     val loginDialog = remember { mutableStateOf(false) }
     val passwordVisible = rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val uiState = viewModel.uiState.collectAsState(initial = UiState.Loading)
     val userSession = viewModel.userSession.collectAsState()
@@ -104,44 +109,11 @@ fun LoginScreen (
                 viewModel.saveUserSession(
                     uiStateValue.data
                 )
-                if (loginDialog.value) {
-                    BasicAlertDialog(onDismissRequest = { }
-                    ) {
-                        Surface(
-                            modifier = modifier
-                                .wrapContentWidth()
-                                .wrapContentHeight(),
-                            shape = MaterialTheme.shapes.large,
-                            tonalElevation = AlertDialogDefaults.TonalElevation
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(imageVector =  Icons.Filled.CheckCircle, contentDescription = null )
-                                    Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan judul
-                                    Text(text = stringResource(R.string.login_success_title), style = MaterialTheme.typography.headlineSmall)
-                                }
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text =
-//                                    stringResource(
-//                                        id = R.string.registration_success,
-//                                        email.value),
-                                    userSession.value.token,
-                                )
-                                Spacer(modifier = modifier.height(24.dp))
-                                TextButton(
-                                    onClick = { loginDialog.value = false
-                                              navigateToHome()},
-                                    modifier = modifier.align(Alignment.End)
-                                ) {
-                                    Text(stringResource(R.string.next), color = Black)
-                                }
-                            }
-                        }
-                    }
-                }
+                Toast.makeText(
+                    context,
+                    stringResource(id = R.string.login_success, email.value),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             is UiState.Error -> {
                 val errorMessage = uiStateValue.errorMessage
@@ -199,8 +171,8 @@ fun LoginScreen (
         passwordIsError = passwordIsError,
         emailIsError = emailIsError,
         passwordVisible = passwordVisible,
-        loginDialog = loginDialog,
-        onLoginClick = onLoginClick
+        onLoginClick = onLoginClick,
+        onNotRegisteredClick = navigateToRegister
     )
 }
 
@@ -212,7 +184,8 @@ fun LoginContent(
     emailIsError: MutableState<Boolean>,
     passwordIsError: MutableState<Boolean>,
     passwordVisible: MutableState<Boolean>,
-    loginDialog: MutableState<Boolean>,
+
+    onNotRegisteredClick: () -> Unit,
     onLoginClick: () -> Unit
 ){
 
@@ -325,6 +298,24 @@ fun LoginContent(
             }
         }
         Spacer(modifier = modifier.height(20.dp))
+        Box (contentAlignment = Alignment.BottomCenter){
+            Row(
+                modifier
+                    .padding(8.dp)
+                    .clickable { onNotRegisteredClick() }
+            ) {
+                Text(
+                    text = stringResource(R.string.not_registered_message),
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+                Text(
+                    text = stringResource(R.string.register),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     }
 
 
@@ -334,6 +325,6 @@ fun LoginContent(
 @Composable
 fun LoginPreview() {
     HorizonTheme {
-        LoginScreen(navigateToHome = {})
+        LoginScreen(navigateToHome = {}, navigateToRegister = {})
     }
 }

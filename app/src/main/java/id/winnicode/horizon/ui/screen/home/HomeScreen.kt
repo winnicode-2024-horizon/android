@@ -66,7 +66,7 @@ fun HomeScreen(
         factory = ViewModelFactory(MainApplication.injection)
     ),
     query: String,
-    navigateToDetail: (String) -> Unit,
+    navigateToDetail: (Int) -> Unit,
 ) {
     val userSession = viewModel.userSession.collectAsState().value
 
@@ -100,6 +100,7 @@ fun HomeScreen(
             }
 
             is UiState.Error -> {
+
             }
         }
     }
@@ -110,7 +111,7 @@ fun HomeScreen(
 private fun HomeContent(
     news: List<News>,
     modifier: Modifier = Modifier,
-    navigateToDetail: (String) -> Unit,
+    navigateToDetail: (Int) -> Unit,
 ) {
     val context = LocalContext.current
     LazyColumn(
@@ -134,7 +135,7 @@ private fun HomeContent(
                         modifier = Modifier
                             .animateItemPlacement(tween(durationMillis = 100))
                             .clickable {
-                                navigateToDetail(new.title)
+                                navigateToDetail(new.id)
                             })
                 }
             } else {
@@ -149,7 +150,7 @@ private fun HomeContent(
                         modifier = Modifier
                             .animateItemPlacement(tween(durationMillis = 100))
                             .clickable {
-                                navigateToDetail(new.title)
+                                navigateToDetail(new.id)
                             })
                 }
             }
