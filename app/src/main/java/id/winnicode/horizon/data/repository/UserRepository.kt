@@ -10,11 +10,15 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
 
     suspend fun fetchNews(token: String): Flow<List<News>>
+    suspend fun fetchNewsById(token: String, NewsId: Int): Flow<News>
 
     suspend fun searchNews(query: String, token: String): Flow<List<News>>
 
     suspend fun register(request: RegisterRequest): Flow<RegisterResponse>
+    suspend fun fetchDummyNewsById(NewsId: Int): News
 
     suspend fun login(request: LoginRequest): Flow<AuthN>
+
+    suspend fun logout(token: String): Flow<RegisterResponse>
 
 }

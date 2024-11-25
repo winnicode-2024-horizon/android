@@ -33,6 +33,18 @@ class DefaultUserRepository(
         }
     }
 
+    override suspend fun fetchNewsById(token: String, NewsId: Int): Flow<News> {
+        return flow {
+            val news = api.getNews("Bearer $token").data.news.map {newsItem ->
+                newsItem.asNews()
+            }
+            val newsDetail = news.find {
+                it.id == NewsId
+            }
+            newsDetail?.let { emit(it) }
+        }
+    }
+
     override suspend fun searchNews(query: String, token: String): Flow<List<News>> {
         return flow {
             val news = api.searchNews("Bearer $token", query).data.news.map {newsItem ->
@@ -51,12 +63,25 @@ class DefaultUserRepository(
         }
     }
 
+    override suspend fun fetchDummyNewsById(NewsId: Int): News {
+        return News.first {
+            it.id == NewsId
+        }
+    }
+
     override suspend fun login(request: LoginRequest): Flow<AuthN> {
         return flow {
             val login = api.login(request).data?.asLogin()
             if (login != null) {
                 emit(login)
             }
+        }
+    }
+
+    override suspend fun logout(token: String): Flow<RegisterResponse> {
+        return flow {
+            val logout = api.logout("Bearer $token")
+            emit(logout)
         }
     }
 }
