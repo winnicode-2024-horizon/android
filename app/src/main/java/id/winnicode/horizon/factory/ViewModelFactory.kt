@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import id.winnicode.horizon.di.Injection
 import id.winnicode.horizon.ui.common.SharedViewModel
+import id.winnicode.horizon.ui.screen.bookmark.BookmarkViewModel
 import id.winnicode.horizon.ui.screen.detail.DetailViewModel
 import id.winnicode.horizon.ui.screen.home.HomeViewModel
 import id.winnicode.horizon.ui.screen.login.LoginViewModel
@@ -34,6 +35,10 @@ class ViewModelFactory(
                 injection.userRepository
             )
             modelClass.isAssignableFrom(DetailViewModel::class.java) -> DetailViewModel(
+                injection.userPreferences,
+                injection.userRepository
+            )
+            modelClass.isAssignableFrom(BookmarkViewModel::class.java) -> BookmarkViewModel(
                 injection.userPreferences,
                 injection.userRepository
             )

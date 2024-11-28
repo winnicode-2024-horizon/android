@@ -1,4 +1,4 @@
-package id.winnicode.horizon.ui.screen.home
+package id.winnicode.horizon.ui.screen.bookmark
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
 
-class HomeViewModel(
+class BookmarkViewModel (
     private val userPreferences: UserPreferences,
     private val userRepository: UserRepository
 ): ViewModel() {
@@ -34,49 +34,24 @@ class HomeViewModel(
 
     private val _userSession: StateFlow<AuthN> = userPreferences.getUserSession()
         .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = AuthN("","", false)
-    )
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = AuthN("", "", false)
+        )
 
     val userSession: StateFlow<AuthN>
         get() = _userSession
-
-    fun saveUserSession(user: AuthN) {
-        viewModelScope.launch {
-            userPreferences.saveUserSession(user)
-        }
-    }
 
     fun logout() {
         viewModelScope.launch {
             userPreferences.logout()
         }
     }
-    fun fetchNews(token: String) {
-        viewModelScope.launch {
-            userRepository.fetchNews(token)
-                .catch {e ->
-//                    when (e) {
-//                        is HttpException -> {
-//                            val errorResponse = e.response()?.errorBody()?.string()
-//                            val json = JSONObject(errorResponse.toString())
-//                            val message = json.optString("message", "Unknown error")
-//                            _uiState.value = UiState.Error("${e.message} $message")
-//                        }
-//                    }
-                    _uiState.value = UiState.Error(e.message.toString())
-                }
-                .collect{news ->
-                    _uiState.value = UiState.Success(news)
-                }
-        }
-    }
 
-    fun searchNews(token: String, query: String) {
+    fun fetchBookmarkNews(token: String) {
         viewModelScope.launch {
-            userRepository.searchNews(query, token)
-                .catch {e ->
+            userRepository.fetchBookmarkNews(token)
+                .catch { e ->
 //                    when (e) {
 //                        is HttpException -> {
 //                            val errorResponse = e.response()?.errorBody()?.string()
@@ -87,7 +62,7 @@ class HomeViewModel(
 //                    }
                     _uiState.value = UiState.Error(e.message.toString())
                 }
-                .collect{news ->
+                .collect { news ->
                     _uiState.value = UiState.Success(news)
                 }
         }
@@ -108,7 +83,6 @@ class HomeViewModel(
                 }
                 .collect{ response ->
                     _bookmarkState.value = UiState.Success(response)
-                    fetchNews(token)
                 }
 
         }
@@ -129,9 +103,7 @@ class HomeViewModel(
                 }
                 .collect{ response ->
                     _bookmarkState.value = UiState.Success(response)
-                    fetchNews(token)
                 }
-
         }
     }
 }

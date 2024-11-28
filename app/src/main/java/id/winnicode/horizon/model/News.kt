@@ -8,7 +8,8 @@ data class News(
     val id: Int,
     val title: String,
     val url: String,
-    val content: String
+    val content: String,
+    var isBookmarked: Boolean = false
 )
 
 data class SearchSuggestion(

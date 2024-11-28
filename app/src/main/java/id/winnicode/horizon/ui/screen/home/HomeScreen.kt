@@ -51,9 +51,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
 import id.winnicode.horizon.factory.ViewModelFactory
+import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.theme.GreyDark
@@ -67,20 +69,20 @@ fun HomeScreen(
     ),
     query: String,
     navigateToDetail: (Int) -> Unit,
+    navController: NavController
 ) {
     val userSession = viewModel.userSession.collectAsState().value
-
-    LaunchedEffect(userSession.token, query) {
-        if (userSession.token.isNotEmpty() && query.isEmpty()) {
-            viewModel.fetchNews(userSession.token)
-        } else if (userSession.token.isNotEmpty() && query.isNotEmpty()) {
-            viewModel.searchNews(userSession.token, query)
-        }
-    }
 
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
+                LaunchedEffect(userSession.token, query, navController) {
+                    if (userSession.token.isNotEmpty() && query.isEmpty()) {
+                        viewModel.fetchNews(userSession.token)
+                    } else if (userSession.token.isNotEmpty() && query.isNotEmpty()) {
+                        viewModel.searchNews(userSession.token, query)
+                    }
+                }
                 Box (modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center){
                     CircularProgressIndicator()
@@ -93,7 +95,8 @@ fun HomeScreen(
                     HomeContent(
                         news = uiState.data,
                         modifier = modifier,
-                        navigateToDetail = navigateToDetail
+                        navigateToDetail = navigateToDetail,
+                        userSession = userSession
                     )
                 }
 
@@ -112,6 +115,7 @@ private fun HomeContent(
     news: List<News>,
     modifier: Modifier = Modifier,
     navigateToDetail: (Int) -> Unit,
+    userSession: AuthN
 ) {
     val context = LocalContext.current
     LazyColumn(
@@ -136,7 +140,8 @@ private fun HomeContent(
                             .animateItemPlacement(tween(durationMillis = 100))
                             .clickable {
                                 navigateToDetail(new.id)
-                            })
+                            },
+                        userSession = userSession)
                 }
             } else {
                 Box(
@@ -151,7 +156,8 @@ private fun HomeContent(
                             .animateItemPlacement(tween(durationMillis = 100))
                             .clickable {
                                 navigateToDetail(new.id)
-                            })
+                            },
+                        userSession = userSession)
                 }
             }
             if (index < news.size - 1) {
@@ -174,14 +180,20 @@ private fun HomeContent(
 }
 
 @Composable
-fun FirstArticleItem(
+private fun FirstArticleItem(
     news: News,
     context: Context,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory(MainApplication.injection)
+    ),
+    userSession: AuthN
 ) {
-    var isBookmarked by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
     var expanded by remember { mutableStateOf(false) }
-
+    LaunchedEffect(key1 = isBookmarked){
+        viewModel.fetchNews(userSession.token)
+    }
 
     Column(
         modifier = modifier.padding(8.dp),
@@ -220,6 +232,11 @@ fun FirstArticleItem(
                 ) {
                     IconButton(
                         onClick = {
+                            if (isBookmarked){
+                                viewModel.deleteBookmarkNew(userSession.token, news.id)
+                            } else {
+                                viewModel.addBookmarkNew(userSession.token, news.id)
+                            }
                             isBookmarked = !isBookmarked
                         },
                         modifier = modifier.padding(end = 6.dp)
@@ -280,13 +297,20 @@ fun FirstArticleItem(
 }
 
 @Composable
-fun RegularArticleItem(
+private fun RegularArticleItem(
     news: News,
     context: Context,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory(MainApplication.injection)
+    ),
+    userSession: AuthN
 ) {
-    var isBookmarked by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
     var expanded by remember { mutableStateOf(false) }
+    LaunchedEffect(isBookmarked){
+        viewModel.fetchNews(userSession.token)
+    }
 
     Row(
         modifier = modifier.padding(12.dp, 12.dp, 12.dp, 4.dp),
@@ -328,6 +352,11 @@ fun RegularArticleItem(
                 )
                 IconButton(
                     onClick = {
+                        if (isBookmarked){
+                            viewModel.deleteBookmarkNew(userSession.token, news.id)
+                        } else {
+                            viewModel.addBookmarkNew(userSession.token, news.id)
+                        }
                         isBookmarked = !isBookmarked
                     },
                     modifier = modifier

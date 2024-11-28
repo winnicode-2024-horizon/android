@@ -83,6 +83,7 @@ import id.winnicode.horizon.ui.common.SharedViewModel
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.navigation.NavigationItem
 import id.winnicode.horizon.ui.navigation.Screen
+import id.winnicode.horizon.ui.screen.bookmark.BookmarkScreen
 import id.winnicode.horizon.ui.screen.detail.DetailScreen
 import id.winnicode.horizon.ui.screen.home.CustomSearchView
 import id.winnicode.horizon.ui.screen.home.HomeScreen
@@ -333,7 +334,8 @@ fun HorizonApp(
                         HomeScreen(query = searchQuery,
                             navigateToDetail = { title ->
                                 navController.navigate(Screen.DetailNew.createRoute(title))
-                            })
+                            },
+                            navController = navController)
                     }
                 }
                 composable(
@@ -344,6 +346,9 @@ fun HorizonApp(
                     DetailScreen(NewsId = newsId)
                 }
                 composable(Screen.Bookmark.route) {
+                    BookmarkScreen(navigateToDetail = { title ->
+                        navController.navigate(Screen.DetailNew.createRoute(title))
+                    })
                 }
                 composable(Screen.Profile.route) {
                 }

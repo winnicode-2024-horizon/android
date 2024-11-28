@@ -10,7 +10,7 @@ fun LoginData.asLogin(): AuthN = AuthN(
     token = token
 )
 
-fun NewsItem.asNews(): News = News(
+fun NewsItem.asNews(isBookmarked: Boolean): News = News(
     publishedAt = publishedAt,
     author = author,
     imageUrl =imageUrl,
@@ -18,5 +18,6 @@ fun NewsItem.asNews(): News = News(
     id = id,
     title = title,
     url = url,
-    content = content
+    content = content,
+    isBookmarked = isBookmarked
 )
