@@ -167,7 +167,7 @@ private fun RegularArticleItem(
     LaunchedEffect(key1 = isBookmark){
         viewModel.fetchBookmarkNews(userSession.token)
     }
-    news.isBookmarked = isBookmark
+    isBookmark = news.isBookmarked
 
     Row(
         modifier = modifier.padding(12.dp, 12.dp, 12.dp, 4.dp),

@@ -331,11 +331,11 @@ fun HorizonApp(
                             onSearchQueryChange = { searchQuery = it }
                         )
                     } else {
-                        HomeScreen(query = searchQuery,
+                        HomeScreen(
+                            query = searchQuery,
                             navigateToDetail = { title ->
                                 navController.navigate(Screen.DetailNew.createRoute(title))
-                            },
-                            navController = navController)
+                            })
                     }
                 }
                 composable(

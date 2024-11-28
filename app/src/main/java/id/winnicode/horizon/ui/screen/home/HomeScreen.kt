@@ -51,7 +51,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
 import id.winnicode.horizon.factory.ViewModelFactory
@@ -69,14 +68,13 @@ fun HomeScreen(
     ),
     query: String,
     navigateToDetail: (Int) -> Unit,
-    navController: NavController
 ) {
     val userSession = viewModel.userSession.collectAsState().value
 
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
-                LaunchedEffect(userSession.token, query, navController) {
+                LaunchedEffect(userSession.token, query) {
                     if (userSession.token.isNotEmpty() && query.isEmpty()) {
                         viewModel.fetchNews(userSession.token)
                     } else if (userSession.token.isNotEmpty() && query.isNotEmpty()) {
@@ -189,7 +187,7 @@ private fun FirstArticleItem(
     ),
     userSession: AuthN
 ) {
-    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
+    var isBookmarked = news.isBookmarked
     var expanded by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = isBookmarked){
         viewModel.fetchNews(userSession.token)
@@ -306,7 +304,7 @@ private fun RegularArticleItem(
     ),
     userSession: AuthN
 ) {
-    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
+    var isBookmarked = news.isBookmarked
     var expanded by remember { mutableStateOf(false) }
     LaunchedEffect(isBookmarked){
         viewModel.fetchNews(userSession.token)
