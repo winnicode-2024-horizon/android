@@ -30,4 +30,5 @@
     <string name="log_out">Log Out</string>
     <string name="cancel">Batal</string>
     <string name="log_out_message">Apakah Anda ingin Log Out?</string>
+    <string name="error_home_screen">Gagal Memuat Berita :(</string>
 </resources>

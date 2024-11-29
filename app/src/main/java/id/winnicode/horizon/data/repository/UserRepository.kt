@@ -21,4 +21,10 @@ interface UserRepository {
 
     suspend fun logout(token: String): Flow<RegisterResponse>
 
+    suspend fun fetchBookmarkNews(token: String): Flow<List<News>>
+
+    suspend fun deleteBookmark(token: String, id: Int): Flow<RegisterResponse>
+
+    suspend fun addBookmark(token: String, id: Int): Flow<RegisterResponse>
+
 }

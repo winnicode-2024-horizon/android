@@ -57,7 +57,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,6 +82,7 @@ import id.winnicode.horizon.ui.common.SharedViewModel
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.navigation.NavigationItem
 import id.winnicode.horizon.ui.navigation.Screen
+import id.winnicode.horizon.ui.screen.bookmark.BookmarkScreen
 import id.winnicode.horizon.ui.screen.detail.DetailScreen
 import id.winnicode.horizon.ui.screen.home.CustomSearchView
 import id.winnicode.horizon.ui.screen.home.HomeScreen
@@ -187,7 +187,7 @@ fun HorizonApp(
                     Screen.Profile.route
                 )
             )
-                BottomBar(navController)
+                BottomBar(navController = navController, currentRoute = currentRoute)
         },
 
         ) { innerPadding ->
@@ -330,7 +330,8 @@ fun HorizonApp(
                             onSearchQueryChange = { searchQuery = it }
                         )
                     } else {
-                        HomeScreen(query = searchQuery,
+                        HomeScreen(
+                            query = searchQuery,
                             navigateToDetail = { title ->
                                 navController.navigate(Screen.DetailNew.createRoute(title))
                             })
@@ -344,6 +345,9 @@ fun HorizonApp(
                     DetailScreen(NewsId = newsId)
                 }
                 composable(Screen.Bookmark.route) {
+                    BookmarkScreen(navigateToDetail = { title ->
+                        navController.navigate(Screen.DetailNew.createRoute(title))
+                    })
                 }
                 composable(Screen.Profile.route) {
                 }
@@ -356,7 +360,8 @@ fun HorizonApp(
 @Composable
 private fun BottomBar(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentRoute: String?
 ) {
     NavigationBar(
         modifier = modifier,
@@ -381,22 +386,18 @@ private fun BottomBar(
                 screen = Screen.Profile
             ),
         )
-        val selectedItem = rememberSaveable { mutableStateOf(0) }
 
-        navigationItems.forEachIndexed { index, item ->
+        navigationItems.map { item ->
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = if (index == selectedItem.value)
-                            item.selectedIcon
-                        else item.unselectedIcon,
+                        imageVector = if (currentRoute == item.screen.route) item.selectedIcon else item.unselectedIcon,
                         contentDescription = item.title
                     )
                 },
                 label = { Text(item.title) },
-                selected = index == selectedItem.value,
+                selected = currentRoute == item.screen.route,
                 onClick = {
-                    selectedItem.value = index
                     navController.navigate(item.screen.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true

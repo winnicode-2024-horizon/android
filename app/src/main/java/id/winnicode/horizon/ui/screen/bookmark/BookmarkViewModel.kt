@@ -1,4 +1,4 @@
-package id.winnicode.horizon.ui.screen.detail
+package id.winnicode.horizon.ui.screen.bookmark
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +17,14 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
 
-class DetailViewModel(
+class BookmarkViewModel (
     private val userPreferences: UserPreferences,
     private val userRepository: UserRepository
 ): ViewModel() {
 
-    private val _uiState: MutableStateFlow<UiState<News>> =
+    private val _uiState: MutableStateFlow<UiState<List<News>>> =
         MutableStateFlow(UiState.Loading)
-    val uiState: StateFlow<UiState<News>>
+    val uiState: StateFlow<UiState<List<News>>>
         get() = _uiState
 
     private val _bookmarkState: MutableStateFlow<UiState<RegisterResponse>> =
@@ -35,8 +35,8 @@ class DetailViewModel(
     private val _userSession: StateFlow<AuthN> = userPreferences.getUserSession()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AuthN("","", false)
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = AuthN("", "", false)
         )
 
     val userSession: StateFlow<AuthN>
@@ -48,18 +48,24 @@ class DetailViewModel(
         }
     }
 
-
-    fun fetchNewsById(token: String, NewsId: Int) {
+    fun fetchBookmarkNews(token: String) {
         viewModelScope.launch {
-            userRepository.fetchNewsById(token, NewsId)
-                .catch {e ->
+            userRepository.fetchBookmarkNews(token)
+                .catch { e ->
+//                    when (e) {
+//                        is HttpException -> {
+//                            val errorResponse = e.response()?.errorBody()?.string()
+//                            val json = JSONObject(errorResponse.toString())
+//                            val message = json.optString("message", "Unknown error")
+//                            _uiState.value = UiState.Error("${e.message} $message")
+//                        }
+//                    }
                     _uiState.value = UiState.Error(e.message.toString())
                 }
-                .collect{ news ->
+                .collect { news ->
                     _uiState.value = UiState.Success(news)
                 }
         }
-
     }
 
     fun addBookmarkNew(token: String, id: Int) {

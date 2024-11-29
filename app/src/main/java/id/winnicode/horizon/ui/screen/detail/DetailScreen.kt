@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
 import id.winnicode.horizon.factory.ViewModelFactory
+import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.theme.GreyDark
@@ -80,6 +81,8 @@ fun DetailScreen(
                 val data = uiState.data
                 DetailContent(
                     news = data,
+                    userSession = userSession,
+                    NewsId = NewsId
                 )
             }
 
@@ -95,14 +98,23 @@ fun DetailScreen(
 fun DetailContent(
     news: News,
     modifier: Modifier = Modifier,
+    viewModel: DetailViewModel = viewModel(
+        factory = ViewModelFactory(MainApplication.injection)
+    ),
+    NewsId: Int,
+    userSession: AuthN
 ) {
-    var isBookmarked by remember{ mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
     val instant = Instant.parse(news.publishedAt)
 
     val wibTime = instant.atZone(ZoneId.of("Asia/Jakarta"))
 
     val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
     val formattedTime = wibTime.format(formatter)
+
+    LaunchedEffect(isBookmarked){
+        viewModel.fetchNewsById(userSession.token, NewsId)
+    }
 
     Column(
         modifier = Modifier
@@ -152,7 +164,14 @@ fun DetailContent(
 
         // Bookmark Button
         Button(
-            onClick = { isBookmarked = !isBookmarked },
+            onClick = {
+            if (isBookmarked){
+                viewModel.deleteBookmarkNew(userSession.token, news.id)
+            } else {
+                viewModel.addBookmarkNew(userSession.token, news.id)
+            }
+            isBookmarked = !isBookmarked
+            },
             shape = RoundedCornerShape(7.dp),
             colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,

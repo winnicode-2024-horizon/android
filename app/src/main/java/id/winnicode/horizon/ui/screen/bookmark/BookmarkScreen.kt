@@ -1,4 +1,4 @@
-package id.winnicode.horizon.ui.screen.home
+package id.winnicode.horizon.ui.screen.bookmark
 
 import android.content.Context
 import android.content.Intent
@@ -47,14 +47,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
-import id.winnicode.horizon.R
 import id.winnicode.horizon.factory.ViewModelFactory
 import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
@@ -63,26 +61,24 @@ import id.winnicode.horizon.ui.theme.GreyDark
 import id.winnicode.horizon.ui.theme.WhiteSmoke
 
 @Composable
-fun HomeScreen(
+fun BookmarkScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(
+    viewModel: BookmarkViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
     ),
-    query: String,
     navigateToDetail: (Int) -> Unit,
-) {
+){
     val userSession = viewModel.userSession.collectAsState().value
+
+    LaunchedEffect(userSession.token) {
+        if (userSession.token.isNotEmpty()) {
+            viewModel.fetchBookmarkNews(userSession.token)
+        }
+    }
 
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
-                LaunchedEffect(userSession.token, query) {
-                    if (userSession.token.isNotEmpty() && query.isEmpty()) {
-                        viewModel.fetchNews(userSession.token)
-                    } else if (userSession.token.isNotEmpty() && query.isNotEmpty()) {
-                        viewModel.searchNews(userSession.token, query)
-                    }
-                }
                 Box (modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center){
                     CircularProgressIndicator()
@@ -92,7 +88,7 @@ fun HomeScreen(
             is UiState.Success -> {
                 Column {
                     Spacer(modifier = modifier.height(4.dp))
-                    HomeContent(
+                    BookmarkContent(
                         news = uiState.data,
                         modifier = modifier,
                         navigateToDetail = navigateToDetail,
@@ -103,10 +99,7 @@ fun HomeScreen(
             }
 
             is UiState.Error -> {
-                Box (modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center){
-                    Text(text = stringResource(R.string.error_home_screen), color = GreyDark)
-                }
+
             }
         }
     }
@@ -114,187 +107,47 @@ fun HomeScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HomeContent(
+private fun BookmarkContent(
     news: List<News>,
     modifier: Modifier = Modifier,
     navigateToDetail: (Int) -> Unit,
-    userSession: AuthN
+    userSession: AuthN,
 ) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 8.dp),
-
-
         ) {
         itemsIndexed(news) { index, new ->
-            if (index == 0) {
-                Box(
-                    modifier = modifier
-                        .padding(top = 4.dp)
-                        .clip(RoundedCornerShape(topStart = 27.dp, topEnd = 27.dp))
-                        .background(WhiteSmoke)
-                        .fillMaxSize()
-                ) {
-                    FirstArticleItem(
-                        news = new,
-                        context = context,
-                        modifier = Modifier
-                            .animateItemPlacement(tween(durationMillis = 100))
-                            .clickable {
-                                navigateToDetail(new.id)
-                            },
-                        userSession = userSession)
-                }
-            } else {
-                Box(
-                    modifier = modifier
-                        .background(WhiteSmoke)
-                        .fillMaxSize(),
-                ) {
-                    RegularArticleItem(
-                        news = new,
-                        context = context,
-                        modifier = Modifier
-                            .animateItemPlacement(tween(durationMillis = 100))
-                            .clickable {
-                                navigateToDetail(new.id)
-                            },
-                        userSession = userSession)
-                }
-            }
-            if (index < news.size - 1) {
-                Box(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(topStart = 27.dp, topEnd = 27.dp))
-                        .background(WhiteSmoke)
-                        .fillMaxSize()
-                ) {
-                    Divider(
-                        color = Color.LightGray,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
-                }
-            }
-
-        }
-    }
-}
-
-@Composable
-private fun FirstArticleItem(
-    news: News,
-    context: Context,
-    modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(
-        factory = ViewModelFactory(MainApplication.injection)
-    ),
-    userSession: AuthN
-) {
-    var isBookmarked = news.isBookmarked
-    var expanded by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = isBookmarked){
-        viewModel.fetchNews(userSession.token)
-    }
-
-    Column(
-        modifier = modifier.padding(8.dp),
-    ) {
-        AsyncImage(
-            model = news.imageUrl,
-            contentDescription = null,
-            modifier = modifier
-                .clip(RoundedCornerShape(24.dp))
-                .width(380.dp)
-                .height(248.dp),
-            contentScale = ContentScale.Crop
-        )
-
-        Column(Modifier.fillMaxWidth()) {
-            Text(
-                text = news.author,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-
-            Box(Modifier.fillMaxWidth()) {
-                Text(
-                    text = news.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black,
-                    maxLines = 3,
-                    modifier = Modifier.padding(bottom = 14.dp)
-                )
-                Row(
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(top = 4.dp, end = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = {
-                            if (isBookmarked){
-                                viewModel.deleteBookmarkNew(userSession.token, news.id)
-                            } else {
-                                viewModel.addBookmarkNew(userSession.token, news.id)
-                            }
-                            isBookmarked = !isBookmarked
+            Box(
+                modifier = modifier
+                    .background(WhiteSmoke)
+                    .fillMaxSize(),
+            ) {
+                RegularArticleItem(
+                    news = new,
+                    context = context,
+                    modifier = Modifier
+                        .animateItemPlacement(tween(durationMillis = 100))
+                        .clickable {
+                            navigateToDetail(new.id)
                         },
-                        modifier = modifier.padding(end = 6.dp)
+                    userSession = userSession)
+            }
+                if (index < news.size - 1) {
+                    Box(
+                        modifier = modifier
+                            .clip(RoundedCornerShape(topStart = 27.dp, topEnd = 27.dp))
+                            .background(WhiteSmoke)
+                            .fillMaxSize()
                     ) {
-                        if (isBookmarked) {
-                            Icon(
-                                imageVector = Icons.Default.Bookmark,
-                                contentDescription = "Bookmark",
-                                tint = Color.DarkGray
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.BookmarkBorder,
-                                contentDescription = "Bookmark",
-                                tint = Color.DarkGray
-                            )
-                        }
-                    }
-                    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreHoriz,
-                                contentDescription = "Bookmark",
-                                tint = Color.DarkGray,
-                            )
-                        }
-                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            DropdownMenuItem(
-                                text = { Text("Bagikan Berita") },
-                                onClick = {
-                                    val intent = Intent()
-                                    intent.action = Intent.ACTION_SEND
-                                    intent.putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        "${news.title}\n${news.url}\nBaca berita terpecaya di Horizon"
-                                    )
-                                    intent.type = "text/plain"
-                                    startActivity(
-                                        context,
-                                        Intent.createChooser(intent, "Share di:"),
-                                        null
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Share,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                        }
+                        Divider(
+                            color = Color.LightGray,
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
                     }
                 }
-
-            }
         }
     }
 }
@@ -304,16 +157,17 @@ private fun RegularArticleItem(
     news: News,
     context: Context,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(
+    userSession: AuthN,
+    viewModel: BookmarkViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
     ),
-    userSession: AuthN
 ) {
-    var isBookmarked = news.isBookmarked
+    var isBookmark by remember { mutableStateOf(news.isBookmarked) }
     var expanded by remember { mutableStateOf(false) }
-    LaunchedEffect(isBookmarked){
-        viewModel.fetchNews(userSession.token)
+    LaunchedEffect(key1 = isBookmark){
+        viewModel.fetchBookmarkNews(userSession.token)
     }
+    isBookmark = news.isBookmarked
 
     Row(
         modifier = modifier.padding(12.dp, 12.dp, 12.dp, 4.dp),
@@ -355,16 +209,16 @@ private fun RegularArticleItem(
                 )
                 IconButton(
                     onClick = {
-                        if (isBookmarked){
+                        if (isBookmark){
                             viewModel.deleteBookmarkNew(userSession.token, news.id)
                         } else {
                             viewModel.addBookmarkNew(userSession.token, news.id)
                         }
-                        isBookmarked = !isBookmarked
+                        isBookmark = !isBookmark
                     },
                     modifier = modifier
                 ) {
-                    if (isBookmarked) {
+                    if (isBookmark) {
                         Icon(
                             imageVector = Icons.Default.Bookmark,
                             contentDescription = "Bookmark",
@@ -397,7 +251,7 @@ private fun RegularArticleItem(
                                     "${news.title}\n${news.url}\nBaca berita terpecaya di Horizon"
                                 )
                                 intent.type = "text/plain"
-                                startActivity(
+                                ContextCompat.startActivity(
                                     context,
                                     Intent.createChooser(intent, "Share di:"),
                                     null
@@ -412,5 +266,3 @@ private fun RegularArticleItem(
         }
     }
 }
-
-
