@@ -47,12 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
+import id.winnicode.horizon.R
 import id.winnicode.horizon.factory.ViewModelFactory
 import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
@@ -101,7 +103,10 @@ fun HomeScreen(
             }
 
             is UiState.Error -> {
-
+                Box (modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center){
+                    Text(text = stringResource(R.string.error_home_screen), color = GreyDark)
+                }
             }
         }
     }

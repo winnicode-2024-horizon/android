@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.HttpException
 
 class SharedViewModel(
     private val userPreferences: UserPreferences,
@@ -57,14 +55,14 @@ class SharedViewModel(
         viewModelScope.launch {
             userRepository.logout(token)
                 .catch {e ->
-                    when (e) {
-                        is HttpException -> {
-                            val errorResponse = e.response()?.errorBody()?.string()
-                            val json = JSONObject(errorResponse.toString())
-                            val message = json.optString("message", "Unknown error")
-                            _uiState.value = UiState.Error("${e.message} $message")
-                        }
-                    }
+//                    when (e) {
+//                        is HttpException -> {
+//                            val errorResponse = e.response()?.errorBody()?.string()
+//                            val json = JSONObject(errorResponse.toString())
+//                            val message = json.optString("message", "Unknown error")
+                            _uiState.value = UiState.Error(e.message.toString())
+//                        }
+//                    }
                 }
                 .collect{ response ->
                     _uiState.value = UiState.Success(response)

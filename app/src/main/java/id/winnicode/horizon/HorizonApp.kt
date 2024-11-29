@@ -57,7 +57,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -188,7 +187,7 @@ fun HorizonApp(
                     Screen.Profile.route
                 )
             )
-                BottomBar(navController)
+                BottomBar(navController = navController, currentRoute = currentRoute)
         },
 
         ) { innerPadding ->
@@ -361,7 +360,8 @@ fun HorizonApp(
 @Composable
 private fun BottomBar(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentRoute: String?
 ) {
     NavigationBar(
         modifier = modifier,
@@ -386,22 +386,18 @@ private fun BottomBar(
                 screen = Screen.Profile
             ),
         )
-        val selectedItem = rememberSaveable { mutableStateOf(0) }
 
-        navigationItems.forEachIndexed { index, item ->
+        navigationItems.map { item ->
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = if (index == selectedItem.value)
-                            item.selectedIcon
-                        else item.unselectedIcon,
+                        imageVector = if (currentRoute == item.screen.route) item.selectedIcon else item.unselectedIcon,
                         contentDescription = item.title
                     )
                 },
                 label = { Text(item.title) },
-                selected = index == selectedItem.value,
+                selected = currentRoute == item.screen.route,
                 onClick = {
-                    selectedItem.value = index
                     navController.navigate(item.screen.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
