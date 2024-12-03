@@ -92,12 +92,20 @@ fun HomeScreen(
             is UiState.Success -> {
                 Column {
                     Spacer(modifier = modifier.height(4.dp))
-                    HomeContent(
-                        news = uiState.data,
-                        modifier = modifier,
-                        navigateToDetail = navigateToDetail,
-                        userSession = userSession
-                    )
+                    if (uiState.data.isNotEmpty()){
+                        HomeContent(
+                            news = uiState.data,
+                            modifier = modifier,
+                            navigateToDetail = navigateToDetail,
+                            userSession = userSession
+                        )
+                    } else{
+                        Box (modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center){
+                            Text(text = stringResource(R.string.empty_bookmark_message), color = GreyDark)
+                        }
+                    }
+
                 }
 
             }

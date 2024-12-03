@@ -2,9 +2,11 @@ package id.winnicode.horizon.data.repository
 
 import id.winnicode.horizon.data.remote.response.RegisterResponse
 import id.winnicode.horizon.model.AuthN
+import id.winnicode.horizon.model.CommentRequest
 import id.winnicode.horizon.model.LoginRequest
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.model.RegisterRequest
+import id.winnicode.horizon.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
@@ -26,5 +28,9 @@ interface UserRepository {
     suspend fun deleteBookmark(token: String, id: Int): Flow<RegisterResponse>
 
     suspend fun addBookmark(token: String, id: Int): Flow<RegisterResponse>
+
+    suspend fun fetchUserProfile(token: String): Flow<UserProfile>
+
+    suspend fun comment (token: String, newsId: Int, request: CommentRequest): Flow<RegisterResponse>
 
 }

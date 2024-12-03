@@ -117,6 +117,7 @@ fun LoginScreen (
             }
             is UiState.Error -> {
                 val errorMessage = uiStateValue.errorMessage
+                loginDialog.value = true
                 if (loginDialog.value){
                     BasicAlertDialog(
                         onDismissRequest = {  }

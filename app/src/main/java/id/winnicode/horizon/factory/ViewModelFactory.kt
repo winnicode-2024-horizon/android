@@ -8,6 +8,7 @@ import id.winnicode.horizon.ui.screen.bookmark.BookmarkViewModel
 import id.winnicode.horizon.ui.screen.detail.DetailViewModel
 import id.winnicode.horizon.ui.screen.home.HomeViewModel
 import id.winnicode.horizon.ui.screen.login.LoginViewModel
+import id.winnicode.horizon.ui.screen.profile.ProfileViewModel
 import id.winnicode.horizon.ui.screen.register.RegisterViewModel
 
 class ViewModelFactory(
@@ -41,6 +42,10 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(BookmarkViewModel::class.java) -> BookmarkViewModel(
                 injection.userPreferences,
                 injection.userRepository
+            )
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> ProfileViewModel(
+                injection.userRepository,
+                injection.userPreferences
             )
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

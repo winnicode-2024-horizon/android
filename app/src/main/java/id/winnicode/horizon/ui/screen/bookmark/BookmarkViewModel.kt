@@ -42,11 +42,6 @@ class BookmarkViewModel (
     val userSession: StateFlow<AuthN>
         get() = _userSession
 
-    fun logout() {
-        viewModelScope.launch {
-            userPreferences.logout()
-        }
-    }
 
     fun fetchBookmarkNews(token: String) {
         viewModelScope.launch {

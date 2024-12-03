@@ -47,12 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
+import id.winnicode.horizon.R
 import id.winnicode.horizon.factory.ViewModelFactory
 import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
@@ -88,18 +90,28 @@ fun BookmarkScreen(
             is UiState.Success -> {
                 Column {
                     Spacer(modifier = modifier.height(4.dp))
-                    BookmarkContent(
-                        news = uiState.data,
-                        modifier = modifier,
-                        navigateToDetail = navigateToDetail,
-                        userSession = userSession
-                    )
+                    if (uiState.data.isNotEmpty()){
+                        BookmarkContent(
+                            news = uiState.data,
+                            modifier = modifier,
+                            navigateToDetail = navigateToDetail,
+                            userSession = userSession
+                        )
+                    } else{
+                        Box (modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center){
+                            Text(text = stringResource(R.string.empty_bookmark_message), color = GreyDark)
+                        }
+                    }
                 }
 
             }
 
             is UiState.Error -> {
-
+                Box (modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center){
+                    Text(text = stringResource(R.string.error_bookmark_messages), color = GreyDark)
+                }
             }
         }
     }

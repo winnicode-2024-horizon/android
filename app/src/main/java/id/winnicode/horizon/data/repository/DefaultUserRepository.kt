@@ -2,13 +2,16 @@ package id.winnicode.horizon.data.repository
 
 import id.winnicode.horizon.data.remote.mapper.asLogin
 import id.winnicode.horizon.data.remote.mapper.asNews
+import id.winnicode.horizon.data.remote.mapper.asProfile
 import id.winnicode.horizon.data.remote.response.RegisterResponse
 import id.winnicode.horizon.data.remote.retrofit.ApiService
 import id.winnicode.horizon.model.AuthN
+import id.winnicode.horizon.model.CommentRequest
 import id.winnicode.horizon.model.LoginRequest
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.model.NewsDummyData
 import id.winnicode.horizon.model.RegisterRequest
+import id.winnicode.horizon.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -121,6 +124,20 @@ class DefaultUserRepository(
         return flow {
             val add = api.addBookmark(authToken = "Bearer $token", id = id)
             emit(add)
+        }
+    }
+
+    override suspend fun fetchUserProfile(token: String): Flow<UserProfile> {
+        return flow {
+            val profile = api.getUserProfile(authToken = "Bearer $token").data.asProfile()
+            emit(profile)
+        }
+    }
+
+    override suspend fun comment(token: String, newsId: Int, request: CommentRequest): Flow<RegisterResponse> {
+        return flow {
+            val comment = api.commentNew(authToken = "Bearer $token", id = newsId, comment = request)
+            emit(comment)
         }
     }
 }
