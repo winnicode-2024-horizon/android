@@ -31,4 +31,11 @@
     <string name="cancel">Batal</string>
     <string name="log_out_message">Apakah Anda ingin Log Out?</string>
     <string name="error_home_screen">Gagal Memuat Berita :(</string>
+    <string name="empty_bookmark_message">Belum ada berita yang di Bookmark</string>
+    <string name="error_bookmark_messages">Gagal memuat Bookmark Berita untuk Anda :(</string>
+    <string name="error_profile_messages">Gagal memuat Profile Anda :(</string>
+    <string name="add_comment">Tambahkan Komentar...</string>
+    <string name="empty_commment">Belum ada Komentar</string>
+    <string name="empty_commment_message">Jadilah yang pertama berkomentar</string>
+    <string name="comment">Komentar</string>
 </resources>

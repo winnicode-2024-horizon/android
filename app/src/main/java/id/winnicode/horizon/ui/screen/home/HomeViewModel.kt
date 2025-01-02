@@ -93,6 +93,26 @@ class HomeViewModel(
         }
     }
 
+    fun fetchNewsByCategory(token: String, category: String) {
+        viewModelScope.launch {
+            userRepository.fetchNewsByCategory(token, category)
+                .catch {e ->
+//                    when (e) {
+//                        is HttpException -> {
+//                            val errorResponse = e.response()?.errorBody()?.string()
+//                            val json = JSONObject(errorResponse.toString())
+//                            val message = json.optString("message", "Unknown error")
+//                            _uiState.value = UiState.Error("${e.message} $message")
+//                        }
+//                    }
+                    _uiState.value = UiState.Error(e.message.toString())
+                }
+                .collect{news ->
+                    _uiState.value = UiState.Success(news)
+                }
+        }
+    }
+
     fun addBookmarkNew(token: String, id: Int) {
         viewModelScope.launch {
             userRepository.addBookmark(token, id)

@@ -2,13 +2,16 @@ package id.winnicode.horizon.data.repository
 
 import id.winnicode.horizon.data.remote.mapper.asLogin
 import id.winnicode.horizon.data.remote.mapper.asNews
+import id.winnicode.horizon.data.remote.mapper.asProfile
 import id.winnicode.horizon.data.remote.response.RegisterResponse
 import id.winnicode.horizon.data.remote.retrofit.ApiService
 import id.winnicode.horizon.model.AuthN
+import id.winnicode.horizon.model.CommentRequest
 import id.winnicode.horizon.model.LoginRequest
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.model.NewsDummyData
 import id.winnicode.horizon.model.RegisterRequest
+import id.winnicode.horizon.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -26,12 +29,9 @@ class DefaultUserRepository(
     }
     override suspend fun fetchNews(token: String): Flow<List<News>> {
         return flow {
-            val newBookmark = api.getBookmarks("Bearer $token").data.news.map { bookmark ->
-                bookmark.id
-            }.toSet()
             val news = api.getNews("Bearer $token").data.news.map {newsItem ->
-                val isBookmarked = newBookmark.contains(newsItem.id)
-                newsItem.asNews(isBookmarked)
+                val newBookmark = api.isBookmarked("Bearer $token", newsItem.id).data
+                newsItem.asNews(newBookmark)
             }
             emit(news)
         }
@@ -39,12 +39,9 @@ class DefaultUserRepository(
 
     override suspend fun fetchNewsById(token: String, NewsId: Int): Flow<News> {
         return flow {
-            val newBookmark = api.getBookmarks("Bearer $token").data.news.map { bookmark ->
-                bookmark.id
-            }.toSet()
             val news = api.getNews("Bearer $token").data.news.map {newsItem ->
-                val isBookmarked = newBookmark.contains(newsItem.id)
-                newsItem.asNews(isBookmarked)
+                val newBookmark = api.isBookmarked("Bearer $token", newsItem.id).data
+                newsItem.asNews(newBookmark)
             }
             val newsDetail = news.find {
                 it.id == NewsId
@@ -53,14 +50,22 @@ class DefaultUserRepository(
         }
     }
 
+    override suspend fun fetchNewsByCategory(token: String, category: String): Flow<List<News>> {
+        return flow {
+            val news = api.newsByCategory("Bearer $token", category).data.news.map {newsItem ->
+                val newBookmark = api.isBookmarked("Bearer $token", newsItem.id).data
+                newsItem.asNews(newBookmark)
+            }
+            emit(news)
+        }
+    }
+
     override suspend fun searchNews(query: String, token: String): Flow<List<News>> {
         return flow {
-            val newBookmark = api.getBookmarks("Bearer $token").data.news.map { bookmark ->
-                bookmark.id
-            }.toSet()
+
             val news = api.searchNews("Bearer $token", query).data.news.map {newsItem ->
-                val isBookmarked = newBookmark.contains(newsItem.id)
-                newsItem.asNews(isBookmarked)
+                val newBookmark = api.isBookmarked("Bearer $token", newsItem.id).data
+                newsItem.asNews(newBookmark)
             }
             emit(news)
         }
@@ -99,12 +104,10 @@ class DefaultUserRepository(
 
     override suspend fun fetchBookmarkNews(token: String): Flow<List<News>> {
         return flow {
-            val newBookmark = api.getBookmarks("Bearer $token").data.news.map { bookmark ->
-                bookmark.id
-            }.toSet()
+
             val news = api.getBookmarks("Bearer $token").data.news.map {newsItem ->
-                val isBookmarked = newBookmark.contains(newsItem.id)
-                newsItem.asNews(isBookmarked)
+                val newBookmark = api.isBookmarked("Bearer $token", newsItem.id).data
+                newsItem.asNews(newBookmark)
             }
             emit(news)
         }
@@ -121,6 +124,24 @@ class DefaultUserRepository(
         return flow {
             val add = api.addBookmark(authToken = "Bearer $token", id = id)
             emit(add)
+        }
+    }
+
+    override suspend fun isNewsBookmarked(token: String, category: String): Flow<RegisterResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun fetchUserProfile(token: String): Flow<UserProfile> {
+        return flow {
+            val profile = api.getUserProfile(authToken = "Bearer $token").data.asProfile()
+            emit(profile)
+        }
+    }
+
+    override suspend fun comment(token: String, newsId: Int, request: CommentRequest): Flow<RegisterResponse> {
+        return flow {
+            val comment = api.commentNew(authToken = "Bearer $token", id = newsId, comment = request)
+            emit(comment)
         }
     }
 }

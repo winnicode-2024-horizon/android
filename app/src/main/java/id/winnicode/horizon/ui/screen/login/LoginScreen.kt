@@ -109,6 +109,7 @@ fun LoginScreen (
                 viewModel.saveUserSession(
                     uiStateValue.data
                 )
+                navigateToHome()
                 Toast.makeText(
                     context,
                     stringResource(id = R.string.login_success, email.value),

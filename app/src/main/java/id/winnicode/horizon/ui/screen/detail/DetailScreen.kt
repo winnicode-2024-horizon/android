@@ -3,6 +3,9 @@ package id.winnicode.horizon.ui.screen.detail
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Button
@@ -26,15 +30,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
@@ -42,11 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import id.winnicode.horizon.MainApplication
+import id.winnicode.horizon.R
 import id.winnicode.horizon.factory.ViewModelFactory
 import id.winnicode.horizon.model.AuthN
 import id.winnicode.horizon.model.News
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.theme.GreyDark
+import id.winnicode.horizon.ui.theme.WhiteSmoke
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -56,11 +63,15 @@ import java.time.format.DateTimeFormatter
 fun DetailScreen(
     modifier: Modifier = Modifier,
     NewsId: Int,
+    detailScrollState: ScrollState,
+    showBottomSheet: (Boolean) -> Unit,
+    commentSize: (Int) -> Unit,
     viewModel: DetailViewModel = viewModel(
         factory = ViewModelFactory(MainApplication.injection)
     ),
 ) {
     val userSession = viewModel.userSession.collectAsState().value
+    val isBookmarked = remember { mutableStateOf(false) }
 
     LaunchedEffect(userSession.token, NewsId) {
         if (userSession.token.isNotEmpty()) {
@@ -79,10 +90,15 @@ fun DetailScreen(
 
             is UiState.Success -> {
                 val data = uiState.data
+                isBookmarked.value = data.isBookmarked
+                commentSize(data.comments.size)
                 DetailContent(
                     news = data,
                     userSession = userSession,
-                    NewsId = NewsId
+                    NewsId = NewsId,
+                    isBookmarked = isBookmarked,
+                    detailScrollState = detailScrollState,
+                    showBottomSheet = showBottomSheet,
                 )
             }
 
@@ -102,9 +118,12 @@ fun DetailContent(
         factory = ViewModelFactory(MainApplication.injection)
     ),
     NewsId: Int,
+    isBookmarked: MutableState<Boolean>,
+    detailScrollState: ScrollState,
+    showBottomSheet: (Boolean) -> Unit,
     userSession: AuthN
 ) {
-    var isBookmarked by remember { mutableStateOf(news.isBookmarked) }
+
     val instant = Instant.parse(news.publishedAt)
 
     val wibTime = instant.atZone(ZoneId.of("Asia/Jakarta"))
@@ -118,7 +137,7 @@ fun DetailContent(
 
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(detailScrollState)
             .fillMaxSize()
     ) {
         AsyncImage(
@@ -131,13 +150,12 @@ fun DetailContent(
         )
 
         Text(
-            text = news.description,
-            style = MaterialTheme.typography.bodyLarge,
+            text = "General",
+            style = MaterialTheme.typography.headlineSmall,
             maxLines = 1,
             color = Color.Gray,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
         )
-
         // Article Title
         Text(
             text = news.title,
@@ -145,6 +163,13 @@ fun DetailContent(
             fontWeight = FontWeight.Bold,
             maxLines = 3,
             color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+        )
+        Text(
+            text = news.description,
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = 1,
+            color = Color.Gray,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
@@ -154,7 +179,7 @@ fun DetailContent(
         ) {
             Text(
                 text = news.author,
-                style = MaterialTheme.typography.bodySmall.copy(color = Color.Black)
+                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
             )
             Text(
                 text = formattedTime,
@@ -165,12 +190,12 @@ fun DetailContent(
         // Bookmark Button
         Button(
             onClick = {
-            if (isBookmarked){
+            if (isBookmarked.value){
                 viewModel.deleteBookmarkNew(userSession.token, news.id)
             } else {
                 viewModel.addBookmarkNew(userSession.token, news.id)
             }
-            isBookmarked = !isBookmarked
+            isBookmarked.value = !isBookmarked.value
             },
             shape = RoundedCornerShape(7.dp),
             colors = ButtonColors(
@@ -188,7 +213,7 @@ fun DetailContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (isBookmarked){
+                if (isBookmarked.value){
                     Icon(
                         imageVector = Icons.Default.Bookmark,
                         contentDescription = "Bookmark",
@@ -201,7 +226,7 @@ fun DetailContent(
                         tint = Color.DarkGray
                     )
                 }
-                if (isBookmarked){
+                if (isBookmarked.value){
                     Text(text = "Bookmarked",
                         Modifier.padding(6.dp)
                     )
@@ -222,7 +247,7 @@ fun DetailContent(
 
         // Article Content
         Text(
-            text = news.content,
+            text = "The head of the BMKG, Dwikorita Karnawati, mentioned that the impacts would include moderate to heavy rains accompanied by lightning and strong winds in the regions of Lampung, Banten, West Java and Jakarta Greater Area (Jabodetabek). In the southern waters of the Sunda Strait, strong winds could reach approximately 15-25 knots (27-46 kilometers per hour).\n\nThe impact of these strong winds could cause high waves of 2.5-4.0 meters in the waters of Bengkulu - Enggano, western Lampung waters, Indian Ocean west of Bengkulu - Lampung, west and south of Sunda Strait, southern waters of Banten, Garut - Pangandaran waters, southwest of Banten, and southern Central Java in the Indian Ocean.\n\nIn addition, sea waves of 1.25 to 2.5 meters are predicted to occur in the area south of Bali to East Nusa Tenggara in the Indian Ocean.\n\nAt a higher atmospheric layer of 3,000 feet (about 1,000 meters), Dwikorita added that wind speeds could reach 35 knots (65 km/h), indicating significant weather potential in the surrounding areas. She urged the public to remain vigilant and cautious of possible extreme weather conditions.\n\n\"Like mini-tornadoes, heavy rain accompanied by lightning, hail and possible impacts such as flooding, landslides, flash floods, waterlogging, strong winds, fallen trees, and slippery roads due to the presence of this cyclone seedling,\" Dwikorita said as quoted from a press release on Friday, December 6, 2024.\n\nShe suggested a temporary suspension of activities, especially for sea transport users and fishers. Dwikorita said the high waves could even reach 4 to 6 meters in the western part of Java's southern waters. \"We urge the public not to underestimate the presence of this cyclone seedling for our collective safety,\" she added.",
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodyLarge.copy(
                 lineBreak = LineBreak.Paragraph,
@@ -230,5 +255,57 @@ fun DetailContent(
             ),
             modifier = Modifier.padding(16.dp)
         )
+
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(WhiteSmoke)
+                .fillMaxWidth()
+                .clickable { showBottomSheet(true) }
+        ) {
+            val firstComment = news.comments.find { it.id == 0 }
+            Row(
+                modifier = Modifier.padding(start = 8.dp, top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.comment),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Text(
+                    text = news.comments.size.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null,
+                    tint = if (firstComment != null) Color.LightGray else WhiteSmoke,
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(30.dp)
+                )
+                Text(
+                    text = firstComment?.comment
+                        ?: stringResource(id = R.string.empty_commment),
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
     }
 }

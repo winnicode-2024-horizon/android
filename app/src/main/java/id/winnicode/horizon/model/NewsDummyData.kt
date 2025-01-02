@@ -1,5 +1,8 @@
 package id.winnicode.horizon.model
 
+import id.winnicode.horizon.data.remote.response.CommentItem
+import id.winnicode.horizon.data.remote.response.UserComment
+
 object NewsDummyData {
     val newsList = listOf(
         News(
@@ -10,7 +13,19 @@ object NewsDummyData {
             id = 1,
             title = "Kesempatan Karir di Bidang Kecerdasan Buatan: Apa yang Perlu Dipersiapkan?",
             url = "https://example.com/news/1",
-            content = "Ekonomi dunia diperkirakan tumbuh 3% pada tahun 2024, didorong oleh investasi teknologi dan infrastruktur."
+            content = "Ekonomi dunia diperkirakan tumbuh 3% pada tahun 2024, didorong oleh investasi teknologi dan infrastruktur.",
+            category = "General",
+            comments = listOf(
+                CommentItem(
+                    id = 1,
+                    comment = "Good Information!",
+                    user = UserComment(
+                        username = "johnny",
+                        firstName = "John",
+                        lastName = "John Smith"
+                    )
+                )
+            )
         ),
         News(
             publishedAt = "2024-11-04T18:00:00Z",
@@ -20,7 +35,28 @@ object NewsDummyData {
             id = 2,
             title = "Pemerintah Luncurkan Program Pendidikan Digital",
             url = "https://example.com/news/2",
-            content = "Program ini bertujuan untuk meningkatkan keterampilan digital di kalangan pelajar dan tenaga kerja muda."
+            content = "Program ini bertujuan untuk meningkatkan keterampilan digital di kalangan pelajar dan tenaga kerja muda.",
+            category = "General",
+            comments = listOf(
+                CommentItem(
+                    id = 1,
+                    comment = "This is a game changer for education!",
+                    user = UserComment(
+                        username = "alice93",
+                        firstName = "Alice",
+                        lastName = "Alice Johnson"
+                    )
+                ),
+                CommentItem(
+                    id = 2,
+                    comment = "Hope this helps the younger generation.",
+                    user = UserComment(
+                        username = "bob456",
+                        firstName = "Bob",
+                        lastName = "Robert Williams"
+                    )
+                )
+            )
         ),
         News(
             publishedAt = "2024-11-03T12:30:00Z",
@@ -30,7 +66,19 @@ object NewsDummyData {
             id = 3,
             title = "Timnas Indonesia Menang Telak di Kualifikasi Piala Dunia",
             url = "https://example.com/news/3",
-            content = "Indonesia berhasil mengalahkan tim lawan dengan skor 4-1 dalam pertandingan terakhir kualifikasi."
+            content = "Indonesia berhasil mengalahkan tim lawan dengan skor 4-1 dalam pertandingan terakhir kualifikasi.",
+            category = "General",
+            comments = listOf(
+                CommentItem(
+                    id = 1,
+                    comment = "Great match, Indonesia played brilliantly!",
+                    user = UserComment(
+                        username = "soccerfan88",
+                        firstName = "Michael",
+                        lastName = "Michael Lee"
+                    )
+                )
+            )
         ),
         News(
             publishedAt = "2024-11-02T15:45:00Z",
@@ -40,7 +88,19 @@ object NewsDummyData {
             id = 4,
             title = "NASA Rencanakan Misi Baru ke Mars",
             url = "https://example.com/news/4",
-            content = "Misi ini bertujuan untuk mengumpulkan sampel tanah Mars dan mencari tanda-tanda kehidupan mikroba."
+            content = "Misi ini bertujuan untuk mengumpulkan sampel tanah Mars dan mencari tanda-tanda kehidupan mikroba.",
+            category = "General",
+            comments = listOf(
+                CommentItem(
+                    id = 1,
+                    comment = "This mission is going to change everything we know about Mars!",
+                    user = UserComment(
+                        username = "spacefan2024",
+                        firstName = "Emma",
+                        lastName = "Emma Watson"
+                    )
+                )
+            )
         ),
         News(
             publishedAt = "2024-11-01T10:00:00Z",
@@ -50,8 +110,167 @@ object NewsDummyData {
             id = 5,
             title = "Teknologi Industri Mengalami Terobosan Baru",
             url = "https://example.com/news/5",
-            content = "Penggunaan AI dan robotika dalam pabrik-pabrik semakin meluas, meningkatkan efisiensi dan mengurangi biaya produksi."
+            content = "Penggunaan AI dan robotika dalam pabrik-pabrik semakin meluas, meningkatkan efisiensi dan mengurangi biaya produksi.",
+            category = "General",
+            comments = listOf(
+                CommentItem(
+                    id = 1,
+                    comment = "AI is definitely the future of industry!",
+                    user = UserComment(
+                        username = "techlover77",
+                        firstName = "David",
+                        lastName = "David Brown"
+                    )
+                )
+            )
+        )
+    )
+
+    val comments = listOf(
+        CommentItem(
+            id = 1,
+            comment = "Good Information!",
+            user = UserComment(
+                username = "johnny",
+                firstName = "John",
+                lastName = "John Smith"
+            )
         ),
+        CommentItem(
+            id = 2,
+            comment = "Great post! Keep it up!",
+            user = UserComment(
+                username = "sarah21",
+                firstName = "Sarah",
+                lastName = "Connor"
+            )
+        ),
+        CommentItem(
+            id = 3,
+            comment = "Very informative, thank you!",
+            user = UserComment(
+                username = "mike007",
+                firstName = "Mike",
+                lastName = "Johnson"
+            )
+        ),
+        CommentItem(
+            id = 4,
+            comment = "This helped me a lot, much appreciated!",
+            user = UserComment(
+                username = "laura_doe",
+                firstName = "Laura",
+                lastName = "Doe"
+            )
+        ),
+        CommentItem(
+            id = 5,
+            comment = "Interesting perspective!",
+            user = UserComment(
+                username = "adam_smith",
+                firstName = "Adam",
+                lastName = "Smith"
+            )
+        ),
+        CommentItem(
+            id = 6,
+            comment = "I disagree with some points, but overall great read.",
+            user = UserComment(
+                username = "emma_lyn",
+                firstName = "Emma",
+                lastName = "Lynch"
+            )
+        ),
+        CommentItem(
+            id = 7,
+            comment = "Could you elaborate more on the topic?",
+            user = UserComment(
+                username = "chris123",
+                firstName = "Chris",
+                lastName = "Evans"
+            )
+        ),
+        CommentItem(
+            id = 8,
+            comment = "This is really insightful!",
+            user = UserComment(
+                username = "kelly_wong",
+                firstName = "Kelly",
+                lastName = "Wong"
+            )
+        ),
+        CommentItem(
+            id = 9,
+            comment = "I have learned a lot from this article.",
+            user = UserComment(
+                username = "james_lee",
+                firstName = "James",
+                lastName = "Lee"
+            )
+        ),
+        CommentItem(
+            id = 10,
+            comment = "Thanks for sharing!",
+            user = UserComment(
+                username = "linda_jane",
+                firstName = "Linda",
+                lastName = "Jane"
+            )
+        ),
+        CommentItem(
+            id = 11,
+            comment = "Could you add more examples?",
+            user = UserComment(
+                username = "oscar_wilde",
+                firstName = "Oscar",
+                lastName = "Wilde"
+            )
+        ),
+        CommentItem(
+            id = 12,
+            comment = "Amazing read, I totally agree with you.",
+            user = UserComment(
+                username = "luis_felix",
+                firstName = "Luis",
+                lastName = "Felix"
+            )
+        ),
+        CommentItem(
+            id = 13,
+            comment = "The information provided is top-notch.",
+            user = UserComment(
+                username = "mia_rose",
+                firstName = "Mia",
+                lastName = "Rose"
+            )
+        ),
+        CommentItem(
+            id = 14,
+            comment = "Good job! Keep writing.",
+            user = UserComment(
+                username = "matthew_griffin",
+                firstName = "Matthew",
+                lastName = "Griffin"
+            )
+        ),
+        CommentItem(
+            id = 15,
+            comment = "This was a very helpful post.",
+            user = UserComment(
+                username = "sophie_clark",
+                firstName = "Sophie",
+                lastName = "Clark"
+            )
+        ),
+        CommentItem(
+            id = 16,
+            comment = "I would love to read more from you.",
+            user = UserComment(
+                username = "john_doe",
+                firstName = "John",
+                lastName = "Doe"
+            )
+        )
     )
 
     val keyword = listOf(

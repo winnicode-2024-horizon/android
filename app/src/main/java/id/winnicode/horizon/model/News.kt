@@ -1,5 +1,7 @@
 package id.winnicode.horizon.model
 
+import id.winnicode.horizon.data.remote.response.CommentItem
+
 data class News(
     val publishedAt: String,
     val author: String,
@@ -9,6 +11,8 @@ data class News(
     val title: String,
     val url: String,
     val content: String,
+    val category: String,
+    val comments: List<CommentItem>,
     var isBookmarked: Boolean = false
 )
 

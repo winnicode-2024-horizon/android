@@ -12,3 +12,7 @@ data class LoginRequest(
     val email: String,
     val password: String
 )
+
+data class CommentRequest(
+    val comment: String
+)

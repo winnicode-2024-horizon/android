@@ -42,12 +42,6 @@ class DetailViewModel(
     val userSession: StateFlow<AuthN>
         get() = _userSession
 
-    fun logout() {
-        viewModelScope.launch {
-            userPreferences.logout()
-        }
-    }
-
 
     fun fetchNewsById(token: String, NewsId: Int) {
         viewModelScope.launch {

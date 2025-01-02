@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,7 +65,6 @@ import id.winnicode.horizon.factory.ViewModelFactory
 import id.winnicode.horizon.model.RegisterRequest
 import id.winnicode.horizon.ui.common.UiState
 import id.winnicode.horizon.ui.pattern.Pattern
-import id.winnicode.horizon.ui.theme.Black
 import id.winnicode.horizon.ui.theme.GreyDark
 import id.winnicode.horizon.ui.theme.HorizonTheme
 import id.winnicode.horizon.ui.theme.outlinedTextFieldColors
@@ -146,7 +146,7 @@ fun RegisterScreen (
                                               navigateToLogin()},
                                     modifier = modifier.align(Alignment.End)
                                 ) {
-                                    Text(stringResource(R.string.next), color = Black)
+                                    Text(stringResource(R.string.next), color = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }
@@ -191,7 +191,7 @@ fun RegisterScreen (
                                     onClick = { loginDialog.value = false },
                                     modifier = modifier.align(Alignment.End)
                                 ) {
-                                    Text(stringResource(R.string.next), color = Black)
+                                    Text(stringResource(R.string.next), color = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }
@@ -222,6 +222,7 @@ fun RegisterScreen (
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RegisterContent(
     modifier: Modifier = Modifier,
@@ -406,8 +407,8 @@ fun RegisterContent(
                 onClick = { onRegisterClick() },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonColors(
-                    containerColor = Black,
-                    contentColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.secondary,
                     disabledContainerColor = GreyDark,
                     disabledContentColor = Color.White
                 ),
