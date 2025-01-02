@@ -150,13 +150,12 @@ fun DetailContent(
         )
 
         Text(
-            text = news.description,
-            style = MaterialTheme.typography.bodyLarge,
+            text = "General",
+            style = MaterialTheme.typography.headlineSmall,
             maxLines = 1,
             color = Color.Gray,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
         )
-
         // Article Title
         Text(
             text = news.title,
@@ -164,6 +163,13 @@ fun DetailContent(
             fontWeight = FontWeight.Bold,
             maxLines = 3,
             color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+        )
+        Text(
+            text = news.description,
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = 1,
+            color = Color.Gray,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
@@ -241,7 +247,7 @@ fun DetailContent(
 
         // Article Content
         Text(
-            text = news.content,
+            text = "The head of the BMKG, Dwikorita Karnawati, mentioned that the impacts would include moderate to heavy rains accompanied by lightning and strong winds in the regions of Lampung, Banten, West Java and Jakarta Greater Area (Jabodetabek). In the southern waters of the Sunda Strait, strong winds could reach approximately 15-25 knots (27-46 kilometers per hour).\n\nThe impact of these strong winds could cause high waves of 2.5-4.0 meters in the waters of Bengkulu - Enggano, western Lampung waters, Indian Ocean west of Bengkulu - Lampung, west and south of Sunda Strait, southern waters of Banten, Garut - Pangandaran waters, southwest of Banten, and southern Central Java in the Indian Ocean.\n\nIn addition, sea waves of 1.25 to 2.5 meters are predicted to occur in the area south of Bali to East Nusa Tenggara in the Indian Ocean.\n\nAt a higher atmospheric layer of 3,000 feet (about 1,000 meters), Dwikorita added that wind speeds could reach 35 knots (65 km/h), indicating significant weather potential in the surrounding areas. She urged the public to remain vigilant and cautious of possible extreme weather conditions.\n\n\"Like mini-tornadoes, heavy rain accompanied by lightning, hail and possible impacts such as flooding, landslides, flash floods, waterlogging, strong winds, fallen trees, and slippery roads due to the presence of this cyclone seedling,\" Dwikorita said as quoted from a press release on Friday, December 6, 2024.\n\nShe suggested a temporary suspension of activities, especially for sea transport users and fishers. Dwikorita said the high waves could even reach 4 to 6 meters in the western part of Java's southern waters. \"We urge the public not to underestimate the presence of this cyclone seedling for our collective safety,\" she added.",
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodyLarge.copy(
                 lineBreak = LineBreak.Paragraph,

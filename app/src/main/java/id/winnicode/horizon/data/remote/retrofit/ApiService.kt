@@ -1,5 +1,6 @@
 package id.winnicode.horizon.data.remote.retrofit
 
+import id.winnicode.horizon.data.remote.response.IsBookmarkedResponse
 import id.winnicode.horizon.data.remote.response.LoginResponse
 import id.winnicode.horizon.data.remote.response.NewsResponse
 import id.winnicode.horizon.data.remote.response.ProfileResponse
@@ -13,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -46,6 +48,12 @@ interface ApiService {
         @Header("Authorization") authToken: String,
         @Query("q") query: String
     ): NewsResponse
+    @Headers("Content-Type: application/json")
+    @GET("/api/news/search")
+    suspend fun newsByCategory(
+        @Header("Authorization") authToken: String,
+        @Query("q") category: String
+    ): NewsResponse
 //  Bookmarks News
     @Headers("Content-Type: application/json")
     @GET("/api/users/bookmarks")
@@ -64,6 +72,13 @@ interface ApiService {
         @Header("Authorization") authToken: String,
         @Query("id") id: Int
     ): RegisterResponse
+
+    @Headers("Content-Type: application/json")
+    @GET("/api/users/bookmarks/news/{id}")
+    suspend fun isBookmarked(
+        @Header("Authorization") authToken: String,
+        @Path("id") newsId: Int,
+    ) :IsBookmarkedResponse
 
 //  User Profile
     @Headers("Content-Type: application/json")

@@ -13,10 +13,12 @@ interface UserRepository {
 
     suspend fun fetchNews(token: String): Flow<List<News>>
     suspend fun fetchNewsById(token: String, NewsId: Int): Flow<News>
+    suspend fun fetchNewsByCategory(token: String, category: String): Flow<List<News>>
 
     suspend fun searchNews(query: String, token: String): Flow<List<News>>
 
     suspend fun register(request: RegisterRequest): Flow<RegisterResponse>
+
     suspend fun fetchDummyNewsById(NewsId: Int): News
 
     suspend fun login(request: LoginRequest): Flow<AuthN>
@@ -29,7 +31,10 @@ interface UserRepository {
 
     suspend fun addBookmark(token: String, id: Int): Flow<RegisterResponse>
 
+    suspend fun isNewsBookmarked(token: String, category: String): Flow<RegisterResponse>
+
     suspend fun fetchUserProfile(token: String): Flow<UserProfile>
+
 
     suspend fun comment (token: String, newsId: Int, request: CommentRequest): Flow<RegisterResponse>
 

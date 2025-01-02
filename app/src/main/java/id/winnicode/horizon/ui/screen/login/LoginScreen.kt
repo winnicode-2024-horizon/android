@@ -109,6 +109,7 @@ fun LoginScreen (
                 viewModel.saveUserSession(
                     uiStateValue.data
                 )
+                navigateToHome()
                 Toast.makeText(
                     context,
                     stringResource(id = R.string.login_success, email.value),
@@ -117,7 +118,6 @@ fun LoginScreen (
             }
             is UiState.Error -> {
                 val errorMessage = uiStateValue.errorMessage
-                loginDialog.value = true
                 if (loginDialog.value){
                     BasicAlertDialog(
                         onDismissRequest = {  }

@@ -19,10 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Share
@@ -30,9 +33,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedFilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableChipElevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +97,47 @@ fun HomeScreen(
 
             is UiState.Success -> {
                 Column {
+                    val selectedFilters = remember { mutableStateOf<String?>(null) }
+                    val categoryList = listOf("General", "Health", "Science", "Business", "Technology", "Sports", "Entertainment")
+
+                    LazyRow {
+                        items(categoryList) { category ->
+                            ElevatedFilterChip(
+                                selected = selectedFilters.value == category,
+                                onClick = {
+                                        if (selectedFilters.value == category) {
+                                            selectedFilters.value = null
+                                            if (userSession.token.isNotEmpty()) {
+                                                viewModel.fetchNews(userSession.token)
+                                            }
+                                        } else {
+                                            selectedFilters.value = category
+                                            if (userSession.token.isNotEmpty()) {
+                                                viewModel.fetchNewsByCategory(userSession.token, category) //Fetch by Category
+                                            }
+                                        }
+                                },
+                                elevation = SelectableChipElevation(
+                                    elevation = 4.dp,
+                                    pressedElevation = 12.dp,
+                                    focusedElevation = 10.dp,
+                                    hoveredElevation = 6.dp,
+                                    draggedElevation = 14.dp,
+                                    disabledElevation = 8.dp
+
+                                ),
+                                label = { Text(text = category, Modifier.padding(8.dp)) },
+                                leadingIcon = { if (selectedFilters.value == category) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.secondary,
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    labelColor = MaterialTheme.colorScheme.primary
+                                ),
+                                modifier = Modifier.padding(start = 4.dp, end = 4.dp)
+                            )
+                        }
+                    }
                     Spacer(modifier = modifier.height(4.dp))
                     if (uiState.data.isNotEmpty()){
                         HomeContent(
@@ -320,7 +367,7 @@ private fun RegularArticleItem(
     var isBookmarked = news.isBookmarked
     var expanded by remember { mutableStateOf(false) }
     LaunchedEffect(isBookmarked){
-        viewModel.fetchNews(userSession.token)
+//        viewModel.fetchNews(userSession.token)
     }
 
     Row(
@@ -332,14 +379,14 @@ private fun RegularArticleItem(
             contentDescription = null,
             modifier = modifier
                 .width(116.dp)
-                .height(78.dp)
-                .clip(RoundedCornerShape(7.dp)),
+                .height(90.dp)
+                .clip(RoundedCornerShape(10.dp)),
             contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(90.dp)
                 .padding(start = 8.dp),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.SpaceBetween
@@ -351,16 +398,17 @@ private fun RegularArticleItem(
                 textAlign = TextAlign.End,
                 maxLines = 2,
             )
+            Text(
+                text = news.author,
+                style = MaterialTheme.typography.bodySmall,
+                color = GreyDark,
+                modifier = modifier.padding(end = 2.dp)
+            )
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = news.author,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = GreyDark,
-                    modifier = modifier.padding(end = 2.dp)
-                )
+
                 IconButton(
                     onClick = {
                         if (isBookmarked){

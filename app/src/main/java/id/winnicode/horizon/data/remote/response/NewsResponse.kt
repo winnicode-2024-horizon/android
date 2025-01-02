@@ -46,6 +46,9 @@ data class NewsItem(
 	@field:SerializedName("content")
 	val content: String,
 
+	@field:SerializedName("category")
+	val category: String,
+
 	@field:SerializedName("comments")
 	val comments: List<CommentItem>
 )
@@ -73,4 +76,16 @@ data class UserComment(
 
 	@field:SerializedName("lastName")
 	val lastName: String
+)
+
+data class IsBookmarkedResponse (
+
+	@field:SerializedName("status")
+	val status: String,
+
+	@field:SerializedName("data")
+	val data: Boolean = false,
+
+	@field:SerializedName("message")
+	val message: String? = null
 )

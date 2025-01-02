@@ -10,6 +10,7 @@ import id.winnicode.horizon.ui.screen.home.HomeViewModel
 import id.winnicode.horizon.ui.screen.login.LoginViewModel
 import id.winnicode.horizon.ui.screen.profile.ProfileViewModel
 import id.winnicode.horizon.ui.screen.register.RegisterViewModel
+import id.winnicode.horizon.ui.screen.setting.SettingViewModel
 
 class ViewModelFactory(
     private val injection: Injection
@@ -45,6 +46,9 @@ class ViewModelFactory(
             )
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> ProfileViewModel(
                 injection.userRepository,
+                injection.userPreferences
+            )
+            modelClass.isAssignableFrom(SettingViewModel::class.java) -> SettingViewModel(
                 injection.userPreferences
             )
 

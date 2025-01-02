@@ -22,7 +22,8 @@ fun NewsItem.asNews(isBookmarked: Boolean): News = News(
     url = url,
     content = content,
     comments = comments,
-    isBookmarked = isBookmarked
+    isBookmarked = isBookmarked,
+    category = category
 )
 
 fun ProfileData.asProfile(): UserProfile = UserProfile(

@@ -14,6 +14,7 @@ object NewsDummyData {
             title = "Kesempatan Karir di Bidang Kecerdasan Buatan: Apa yang Perlu Dipersiapkan?",
             url = "https://example.com/news/1",
             content = "Ekonomi dunia diperkirakan tumbuh 3% pada tahun 2024, didorong oleh investasi teknologi dan infrastruktur.",
+            category = "General",
             comments = listOf(
                 CommentItem(
                     id = 1,
@@ -35,6 +36,7 @@ object NewsDummyData {
             title = "Pemerintah Luncurkan Program Pendidikan Digital",
             url = "https://example.com/news/2",
             content = "Program ini bertujuan untuk meningkatkan keterampilan digital di kalangan pelajar dan tenaga kerja muda.",
+            category = "General",
             comments = listOf(
                 CommentItem(
                     id = 1,
@@ -65,6 +67,7 @@ object NewsDummyData {
             title = "Timnas Indonesia Menang Telak di Kualifikasi Piala Dunia",
             url = "https://example.com/news/3",
             content = "Indonesia berhasil mengalahkan tim lawan dengan skor 4-1 dalam pertandingan terakhir kualifikasi.",
+            category = "General",
             comments = listOf(
                 CommentItem(
                     id = 1,
@@ -86,6 +89,7 @@ object NewsDummyData {
             title = "NASA Rencanakan Misi Baru ke Mars",
             url = "https://example.com/news/4",
             content = "Misi ini bertujuan untuk mengumpulkan sampel tanah Mars dan mencari tanda-tanda kehidupan mikroba.",
+            category = "General",
             comments = listOf(
                 CommentItem(
                     id = 1,
@@ -107,6 +111,7 @@ object NewsDummyData {
             title = "Teknologi Industri Mengalami Terobosan Baru",
             url = "https://example.com/news/5",
             content = "Penggunaan AI dan robotika dalam pabrik-pabrik semakin meluas, meningkatkan efisiensi dan mengurangi biaya produksi.",
+            category = "General",
             comments = listOf(
                 CommentItem(
                     id = 1,

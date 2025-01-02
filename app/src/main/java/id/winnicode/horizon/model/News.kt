@@ -11,6 +11,7 @@ data class News(
     val title: String,
     val url: String,
     val content: String,
+    val category: String,
     val comments: List<CommentItem>,
     var isBookmarked: Boolean = false
 )

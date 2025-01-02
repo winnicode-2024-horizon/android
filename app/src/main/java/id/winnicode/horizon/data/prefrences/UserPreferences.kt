@@ -16,6 +16,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     private val EXPIRED_AT = stringPreferencesKey("expiredAt")
     private val TOKEN_KEY = stringPreferencesKey("token")
     private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
+    private val THEME_KEY = booleanPreferencesKey("theme_setting")
 
     fun getUserSession(): Flow<AuthN> {
         return dataStore.data.map { preferences->
@@ -24,6 +25,17 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
                 preferences[TOKEN_KEY] ?: "",
                 preferences[IS_LOGIN_KEY] ?: false
             )
+        }
+    }
+    fun getThemeSetting(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[THEME_KEY] ?: false
+        }
+    }
+
+    suspend fun saveThemeSetting(isDarkModeActive: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[THEME_KEY] = isDarkModeActive
         }
     }
 
