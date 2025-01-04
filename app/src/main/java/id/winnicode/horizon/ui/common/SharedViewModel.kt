@@ -113,7 +113,6 @@ class SharedViewModel(
                     _newsUiState.value = UiState.Success(news)
                 }
         }
-
     }
 
 

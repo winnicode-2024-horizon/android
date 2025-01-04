@@ -89,4 +89,13 @@ dependencies {
     //SplashScreen
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
+    //test
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.7.1")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+    testImplementation ("org.mockito:mockito-inline:4.4.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+
 }
